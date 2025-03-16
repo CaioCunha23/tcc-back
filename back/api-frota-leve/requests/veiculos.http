@@ -1,0 +1,55 @@
+POST http://localhost:3000/veiculos
+Content-Type: application/json
+
+{
+  "fornecedor": "Fornecedor X",
+  "contrato": "ContratoXYZ",
+  "placa": "ABC-1234",
+  "renavan": "REN12345678",
+  "chassi": "CHAS1234567890",
+  "modelo": "Modelo A",
+  "cor": "Preto",
+  "status": "Disponível",
+  "cliente": "Cliente Y",
+  "uidMSK": "ABC123",
+  "perfil": "Perfil A",
+  "jobLevel": "Pleno",
+  "descricaoCargo": "Descrição detalhada do cargo",
+  "centroCusto": "Centro A",
+  "franquiaKM": 1000,
+  "carroReserva": false,
+  "dataDisponibilizacao": "2025-03-01T00:00:00Z",
+  "mesesContratados": 12,
+  "previsaoDevolucao": "2026-03-01T00:00:00Z",
+  "mesesFaltantes": 6,
+  "mensalidade": 1500.00,
+  "budget": 2000.00,
+  "multa": 300.00,
+  "proximaRevisao": "2025-06-01T00:00:00Z"
+}
+
+###
+
+GET http://localhost:3000/veiculos
+
+###
+
+GET http://localhost:3000/veiculos/msk/ABC123
+
+###
+
+GET http://localhost:3000/veiculos/placa/ABC-1234
+
+###
+
+PUT http://localhost:3000/veiculos/1
+Content-Type: application/json
+
+{
+  "status": "Em uso",
+  "budget": 2100.00
+}
+
+###
+
+DELETE http://localhost:3000/veiculos/1

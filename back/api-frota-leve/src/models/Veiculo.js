@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize'
 import database from '../db/database.js'
-import Colaborador from './Colaborador.js'
 
 export const Veiculo = database.define('veiculo', {
     id: {

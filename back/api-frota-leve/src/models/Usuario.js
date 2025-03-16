@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize'
 import database from '../db/database.js'
 
-export const AuthUser = database.define('auth_user', {
+export const Usuario = database.define('usuario', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -26,9 +26,6 @@ export const AuthUser = database.define('auth_user', {
         type: Sequelize.STRING,
         defaultValue: 'default'
     }
-}, {
-    tableName: 'auth_users',
-    timestamps: true
 })
 
-export default AuthUser
+export default Usuario

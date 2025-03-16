@@ -1,0 +1,42 @@
+POST http://localhost:3000/colaboradores
+Content-Type: application/json
+
+{
+  "nome": "João da Silva",
+  "status": "Ativo",
+  "email": "joao.silva@example.com",
+  "uidMSK": "XYZ789",
+  "localidade": "SSZ",
+  "brand": "Brand X",
+  "jobTitle": "Motorista",
+  "cpf": "12345678901",
+  "usaEstacionamento": true,
+  "cidadeEstacionamento": "Santos",
+  "cnh": "CNH987654",
+  "tipoCNH": "A"
+}
+
+###
+
+GET http://localhost:3000/colaboradores
+
+###
+
+GET http://localhost:3000/colaboradores/id/1
+
+###
+
+GET http://localhost:3000/colaboradores/msk/XYZ789
+
+###
+
+PUT http://localhost:3000/colaboradores/1
+Content-Type: application/json
+
+{
+  "status": "Inativo"
+}
+
+###
+
+DELETE http://localhost:3000/colaboradores/1
