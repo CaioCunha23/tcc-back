@@ -1,4 +1,4 @@
-import Usuario from "../models/Usuario"
+import Usuario from "../models/Usuario.js"
 
 async function createUser(req, res) {
     const { email, uidMSK, password, type } = req.body
