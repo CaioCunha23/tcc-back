@@ -58,7 +58,10 @@ export const Colaborador = database.define('colaborador', {
     tipoCNH: {
         type: Sequelize.STRING,
         allowNull: false
-    }
-})
+    },
+},
+    {
+        tableName: "colaboradores",
+    })
 
 export default Colaborador
