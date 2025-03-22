@@ -10,8 +10,10 @@ import router from './src/routes/router.js';
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:5173",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: "*",
+  methods: ["*"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
 }))
 
 app.use(express.json());
