@@ -78,6 +78,21 @@ async function getVehicles(req, res) {
     }
 }
 
+async function getVehicleByID(req, res) {
+    const { id } = req.params
+
+    try {
+        const vehicles = await Veiculo.findAll({ where: { id } })
+        if (vehicles && vehicles.length > 0) {
+            res.json(vehicles)
+        } else {
+            res.status(404).json({ error: 'Nenhum veículo encontrado para o UID MSK informado' })
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar veículo: ' + error.message })
+    }
+}
+
 async function getVehicleByMskID(req, res) {
     const { uidMSK } = req.params
 
@@ -208,6 +223,7 @@ async function deleteVehicle(req, res) {
 export default {
     createVehicle,
     getVehicles,
+    getVehicleByID,
     getVehicleByMskID,
     getVehicleByPlate,
     updateVehicle,

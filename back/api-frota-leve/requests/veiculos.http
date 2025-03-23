@@ -1,4 +1,4 @@
-POST http://localhost:3000/veiculos
+POST http://localhost:3000/veiculo
 Content-Type: application/json
 
 {
@@ -34,15 +34,19 @@ GET http://localhost:3000/veiculos
 
 ###
 
-GET http://localhost:3000/veiculos/ABC123
+GET http://localhost:3000/veiculo/11
 
 ###
 
-GET http://localhost:3000/veiculos/ABC-1234
+GET http://localhost:3000/veiculo/ABC123
 
 ###
 
-PUT http://localhost:3000/veiculos/1
+GET http://localhost:3000/veiculo/ABC-1234
+
+###
+
+PUT http://localhost:3000/veiculo/1
 Content-Type: application/json
 
 {
@@ -52,4 +56,4 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/veiculos/1
+DELETE http://localhost:3000/veiculo/1
