@@ -18,15 +18,15 @@ router.delete('/usuarios/:uidMSK', authService.checaToken, usuariosController.de
 
 router.post('/veiculos', veiculosController.createVehicle);
 router.get('/veiculos', veiculosController.getVehicles);
-router.get('/veiculos/msk/:uidMSK', veiculosController.getVehicleByMskID);
-router.get('/veiculos/placa/:placa', veiculosController.getVehicleByPlate);
+router.get('/veiculos/:uidMSK', veiculosController.getVehicleByMskID);
+router.get('/veiculos/:placa', veiculosController.getVehicleByPlate);
 router.put('/veiculos/:id', veiculosController.updateVehicle);
 router.delete('/veiculos/:id', veiculosController.deleteVehicle);
 
 router.post('/colaboradores', colaboradoresController.createWorker);
 router.get('/colaboradores', colaboradoresController.getWorkers);
-router.get('/colaboradores/id/:id', colaboradoresController.getWorkerById);
-router.get('/colaboradores/msk/:uidMSK', colaboradoresController.getWorkerByMskID);
+router.get('/colaboradores/:id', colaboradoresController.getWorkerById);
+router.get('/colaboradores/:uidMSK', colaboradoresController.getWorkerByMskID);
 router.put('/colaboradores/:id', colaboradoresController.updateWorker);
 router.delete('/colaboradores/:id', colaboradoresController.deleteWorker);
 

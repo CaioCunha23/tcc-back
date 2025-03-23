@@ -34,11 +34,11 @@ GET http://localhost:3000/veiculos
 
 ###
 
-GET http://localhost:3000/veiculos/msk/ABC123
+GET http://localhost:3000/veiculos/ABC123
 
 ###
 
-GET http://localhost:3000/veiculos/placa/ABC-1234
+GET http://localhost:3000/veiculos/ABC-1234
 
 ###
 

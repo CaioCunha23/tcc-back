@@ -22,11 +22,11 @@ GET http://localhost:3000/colaboradores
 
 ###
 
-GET http://localhost:3000/colaboradores/id/1
+GET http://localhost:3000/colaboradores/6
 
 ###
 
-GET http://localhost:3000/colaboradores/msk/XYZ789
+GET http://localhost:3000/colaboradores/XYZ789
 
 ###
 
