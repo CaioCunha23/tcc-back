@@ -86,7 +86,7 @@ async function getVehicleByID(req, res) {
         if (vehicles && vehicles.length > 0) {
             res.json(vehicles)
         } else {
-            res.status(404).json({ error: 'Nenhum veículo encontrado para o UID MSK informado' })
+            res.status(404).json({ error: 'Nenhum veículo encontrado para o ID informado' })
         }
     } catch (error) {
         res.status(500).json({ error: 'Erro ao buscar veículo: ' + error.message })

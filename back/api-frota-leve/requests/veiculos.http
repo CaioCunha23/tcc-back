@@ -34,7 +34,7 @@ GET http://localhost:3000/veiculos
 
 ###
 
-GET http://localhost:3000/veiculo/11
+GET http://localhost:3000/veiculo/3
 
 ###
 
