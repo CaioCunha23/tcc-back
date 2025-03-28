@@ -6,6 +6,8 @@ Content-Type: application/json
   "status": "Ativo",
   "email": "joao.silva@example.com",
   "uidMSK": "XYZ789",
+  "password": "senha123",
+  "type": "default",
   "localidade": "SSZ",
   "brand": "Brand X",
   "jobTitle": "Motorista",
@@ -28,6 +30,7 @@ GET http://localhost:3000/colaborador/6
 
 GET http://localhost:3000/colaborador/XYZ789
 
+
 ###
 
 PUT http://localhost:3000/colaborador/1
@@ -36,6 +39,7 @@ Content-Type: application/json
 {
   "status": "Inativo"
 }
+
 
 ###
 

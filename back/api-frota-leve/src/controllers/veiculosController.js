@@ -11,10 +11,7 @@ async function createVehicle(req, res) {
         cor,
         status,
         cliente,
-        uidMSK,
         perfil,
-        jobLevel,
-        descricaoCargo,
         centroCusto,
         franquiaKM,
         carroReserva,
@@ -38,10 +35,7 @@ async function createVehicle(req, res) {
         cor,
         status,
         cliente,
-        uidMSK,
         perfil,
-        jobLevel,
-        descricaoCargo,
         centroCusto,
         franquiaKM,
         carroReserva,
@@ -82,26 +76,11 @@ async function getVehicleByID(req, res) {
     const { id } = req.params
 
     try {
-        const vehicles = await Veiculo.findAll({ where: { id } })
-        if (vehicles && vehicles.length > 0) {
-            res.json(vehicles)
+        const vehicle = await Veiculo.findByPk(id)
+        if (vehicle) {
+            res.json(vehicle.toJSON())
         } else {
             res.status(404).json({ error: 'Nenhum veículo encontrado para o ID informado' })
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar veículo: ' + error.message })
-    }
-}
-
-async function getVehicleByMskID(req, res) {
-    const { uidMSK } = req.params
-
-    try {
-        const vehicles = await Veiculo.findAll({ where: { uidMSK } })
-        if (vehicles && vehicles.length > 0) {
-            res.json(vehicles)
-        } else {
-            res.status(404).json({ error: 'Nenhum veículo encontrado para o UID MSK informado' })
         }
     } catch (error) {
         res.status(500).json({ error: 'Erro ao buscar veículo: ' + error.message })
@@ -135,10 +114,7 @@ async function updateVehicle(req, res) {
         cor,
         status,
         cliente,
-        uidMSK,
         perfil,
-        jobLevel,
-        descricaoCargo,
         centroCusto,
         franquiaKM,
         carroReserva,
@@ -167,10 +143,7 @@ async function updateVehicle(req, res) {
         if (cor) vehicle.cor = cor
         if (status) vehicle.status = status
         if (cliente) vehicle.cliente = cliente
-        if (uidMSK) vehicle.uidMSK = uidMSK
         if (perfil) vehicle.perfil = perfil
-        if (jobLevel) vehicle.jobLevel = jobLevel
-        if (descricaoCargo) vehicle.descricaoCargo = descricaoCargo
         if (centroCusto) vehicle.centroCusto = centroCusto
         if (franquiaKM !== undefined) vehicle.franquiaKM = franquiaKM
         if (carroReserva !== undefined) vehicle.carroReserva = carroReserva
@@ -224,7 +197,6 @@ export default {
     createVehicle,
     getVehicles,
     getVehicleByID,
-    getVehicleByMskID,
     getVehicleByPlate,
     updateVehicle,
     deleteVehicle

@@ -1,0 +1,32 @@
+POST http://localhost:3000/historico
+Content-Type: application/json
+
+{
+  "colaboradorUid": "XYZ789",
+  "veiculoId": 1,
+  "dataInicio": "2023-10-01T00:00:00Z",
+  "dataFim": "2023-10-10T00:00:00Z",
+  "tipoUso": "temporário"
+}
+
+###
+
+GET http://localhost:3000/historicos
+
+###
+
+GET http://localhost:3000/historico/1
+
+###
+
+PUT http://localhost:3000/historico/1
+Content-Type: application/json
+
+{
+  "dataFim": "2023-10-15T00:00:00Z",
+  "tipoUso": "permanente"
+}
+
+###
+
+DELETE http://localhost:3000/historico/1

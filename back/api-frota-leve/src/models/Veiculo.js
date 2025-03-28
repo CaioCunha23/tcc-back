@@ -47,24 +47,8 @@ export const Veiculo = database.define('veiculo', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    uidMSK: {
-        type: Sequelize.STRING(9),
-        allowNull: false,
-        references: {
-            model: 'colaboradores',
-            key: 'uidMSK'
-        }
-    },
     perfil: {
         type: Sequelize.STRING,
-        allowNull: false
-    },
-    jobLevel: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    descricaoCargo: {
-        type: Sequelize.TEXT,
         allowNull: false
     },
     centroCusto: {

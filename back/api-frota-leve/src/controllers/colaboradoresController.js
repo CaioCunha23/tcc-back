@@ -7,6 +7,8 @@ async function createWorker(req, res) {
         status,
         email,
         uidMSK,
+        password,
+        type,
         localidade,
         brand,
         jobTitle,
@@ -22,6 +24,8 @@ async function createWorker(req, res) {
         status,
         email,
         uidMSK,
+        password,
+        type,
         localidade,
         brand,
         jobTitle,
@@ -97,6 +101,8 @@ async function updateWorker(req, res) {
         status,
         email,
         uidMSK,
+        password,
+        type,
         localidade,
         brand,
         jobTitle,
@@ -117,6 +123,8 @@ async function updateWorker(req, res) {
         if (status) worker.status = status
         if (email) worker.email = email
         if (uidMSK) worker.uidMSK = uidMSK
+        if (password) worker.password = password
+        if (type) worker.type = type
         if (localidade) worker.localidade = localidade
         if (brand) worker.brand = brand
         if (jobTitle) worker.jobTitle = jobTitle

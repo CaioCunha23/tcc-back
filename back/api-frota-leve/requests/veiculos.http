@@ -11,10 +11,7 @@ Content-Type: application/json
   "cor": "Preto",
   "status": "Disponível",
   "cliente": "Cliente Y",
-  "uidMSK": "ABC123",
   "perfil": "Perfil A",
-  "jobLevel": "Pleno",
-  "descricaoCargo": "Descrição detalhada do cargo",
   "centroCusto": "Centro A",
   "franquiaKM": 1000,
   "carroReserva": false,
@@ -35,10 +32,6 @@ GET http://localhost:3000/veiculos
 ###
 
 GET http://localhost:3000/veiculo/3
-
-###
-
-GET http://localhost:3000/veiculo/ABC123
 
 ###
 

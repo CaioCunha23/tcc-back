@@ -3,43 +3,6 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('usuarios', {
-      id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-        allowNull: false
-      },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        unique: true
-      },
-      uidMSK: {
-        type: Sequelize.STRING(6),
-        allowNull: false,
-        unique: true
-      },
-      password: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      type: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: 'default'
-      },
-      createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.fn('NOW')
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.fn('NOW')
-      }
-    });
 
     await queryInterface.createTable('colaboradores', {
       id: {
@@ -66,6 +29,15 @@ module.exports = {
         type: Sequelize.STRING(6),
         allowNull: false,
         unique: true
+      },
+      password: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      type: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'default'
       },
       localidade: {
         type: Sequelize.STRING(5),
@@ -159,26 +131,8 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      uidMSK: {
-        type: Sequelize.STRING(6),
-        allowNull: false,
-        references: {
-          model: 'colaboradores',
-          key: 'uidMSK'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT'
-      },
       perfil: {
         type: Sequelize.STRING,
-        allowNull: false
-      },
-      jobLevel: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      descricaoCargo: {
-        type: Sequelize.TEXT,
         allowNull: false
       },
       centroCusto: {
@@ -237,11 +191,62 @@ module.exports = {
         defaultValue: Sequelize.fn('NOW')
       }
     });
+
+    await queryInterface.createTable('historico_utilizacao_veiculos', {
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false
+      },
+      colaboradorUid: {
+        type: Sequelize.STRING(6),
+        allowNull: false,
+        references: {
+          model: 'colaboradores',
+          key: 'uidMSK'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT'
+      },
+      veiculoId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'veiculos',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT'
+      },
+      dataInicio: {
+        type: Sequelize.DATE,
+        allowNull: false
+      },
+      dataFim: {
+        type: Sequelize.DATE,
+        allowNull: true
+      },
+      tipoUso: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn('NOW')
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn('NOW')
+      }
+    });
   },
 
   async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('historico_utilizacao_veiculos');
     await queryInterface.dropTable('veiculos');
     await queryInterface.dropTable('colaboradores');
-    await queryInterface.dropTable('usuarios');
   }
 };
