@@ -1,4 +1,5 @@
 import Colaborador from '../models/Colaborador.js'
+import Veiculo from '../models/Veiculo.js'
 
 async function createWorker(req, res) {
     const {
@@ -47,7 +48,12 @@ async function createWorker(req, res) {
 
 async function getWorkers(req, res) {
     try {
-        const workers = await Colaborador.findAll()
+        const workers = await Colaborador.findAll({
+            include: {
+                model: Veiculo,
+                attributes: ['placa'],
+            },
+        })
         res.json(workers)
     } catch (error) {
         res.status(500).json({ error: 'Erro ao buscar colaboradores: ' + error.message })
