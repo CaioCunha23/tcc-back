@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import Usuario from '../models/Usuario.js';
+import Colaborador from '../models/Colaborador.js';
 
 async function login(req, res) {
     const { login, password } = req.body;
@@ -7,9 +7,9 @@ async function login(req, res) {
     let user;
 
     if (login.includes('@')) {
-        user = await Usuario.findOne({ where: { email: login, password } });
+        user = await Colaborador.findOne({ where: { email: login, password } });
     } else {
-        user = await Usuario.findOne({ where: { uidMSK: login, password } });
+        user = await Colaborador.findOne({ where: { uidMSK: login, password } });
     }
 
     if (!user) {

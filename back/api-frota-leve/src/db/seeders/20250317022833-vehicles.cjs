@@ -15,10 +15,7 @@ module.exports = {
         cor: "Preto",
         status: "Disponível",
         cliente: "Cliente X",
-        uidMSK: "JSI123",
         perfil: "Perfil A",
-        jobLevel: "Pleno",
-        descricaoCargo: "Veículo destinado ao transporte executivo.",
         centroCusto: "Centro 1",
         franquiaKM: 1500,
         carroReserva: false,
@@ -43,10 +40,7 @@ module.exports = {
         cor: "Branco",
         status: "Em uso",
         cliente: "Cliente Y",
-        uidMSK: "MOL456",
         perfil: "Perfil B",
-        jobLevel: "Junior",
-        descricaoCargo: "Veículo para entregas rápidas.",
         centroCusto: "Centro 2",
         franquiaKM: 1200,
         carroReserva: true,
@@ -71,10 +65,7 @@ module.exports = {
         cor: "Vermelho",
         status: "Disponível",
         cliente: "Cliente Z",
-        uidMSK: "CPE789",
         perfil: "Perfil C",
-        jobLevel: "Senior",
-        descricaoCargo: "Veículo para transporte de cargas.",
         centroCusto: "Centro 3",
         franquiaKM: 2000,
         carroReserva: false,
@@ -99,10 +90,7 @@ module.exports = {
         cor: "Azul",
         status: "Em manutenção",
         cliente: "Cliente W",
-        uidMSK: "ACO012",
         perfil: "Perfil D",
-        jobLevel: "Pleno",
-        descricaoCargo: "Veículo para serviços de campo.",
         centroCusto: "Centro 4",
         franquiaKM: 1000,
         carroReserva: true,
@@ -127,10 +115,7 @@ module.exports = {
         cor: "Cinza",
         status: "Disponível",
         cliente: "Cliente V",
-        uidMSK: "RSO345",
         perfil: "Perfil E",
-        jobLevel: "Junior",
-        descricaoCargo: "Veículo para transporte urbano.",
         centroCusto: "Centro 5",
         franquiaKM: 1800,
         carroReserva: false,
@@ -149,8 +134,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-
-    await queryInterface.bulkDelete('veiculos', null);
-
+    await queryInterface.bulkDelete('veiculos', null, {});
   }
 };

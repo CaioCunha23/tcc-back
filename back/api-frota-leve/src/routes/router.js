@@ -5,7 +5,8 @@ const router = Router();
 import authService from '../services/authService.js';
 import veiculosController from '../controllers/veiculosController.js';
 import colaboradoresController from '../controllers/colaboradoresController.js';
-import historicoUtilizacaoVeiculosController from '../controllers/historicoUtilizacaoVeiculosController.js'
+import historicoUtilizacaoVeiculosController from '../controllers/historicoUtilizacaoVeiculosController.js';
+import infracoesController from '../controllers/infracoesController.js';
 
 router.post('/login', authService.login);
 router.post('/eu', authService.pegarUsuarioDoToken);
@@ -26,9 +27,15 @@ router.put('/veiculo/:id', veiculosController.updateVehicle);
 router.delete('/veiculo/:id', veiculosController.deleteVehicle);
 
 router.post('/historico', historicoUtilizacaoVeiculosController.createHistorico);
-router.post('/historicos', historicoUtilizacaoVeiculosController.getHistoricos);
-router.post('/historico/:id', historicoUtilizacaoVeiculosController.getHistoricoById);
-router.post('/historico/:id', historicoUtilizacaoVeiculosController.updateHistorico);
-router.post('/historico/:id', historicoUtilizacaoVeiculosController.deleteHistorico);
+router.get('/historicos', historicoUtilizacaoVeiculosController.getHistoricos);
+router.get('/historico/:id', historicoUtilizacaoVeiculosController.getHistoricoById);
+router.put('/historico/:id', historicoUtilizacaoVeiculosController.updateHistorico);
+router.delete('/historico/:id', historicoUtilizacaoVeiculosController.deleteHistorico);
+
+router.post('/infracao', infracoesController.createInfracao);
+router.get('/infracoes', infracoesController.getInfracoes);
+router.get('/infracao/:id', infracoesController.getInfracaoById);
+router.put('/infracao/:id', infracoesController.updateInfracao);
+router.delete('/infracao/:id', infracoesController.deleteInfracao);
 
 export default router;

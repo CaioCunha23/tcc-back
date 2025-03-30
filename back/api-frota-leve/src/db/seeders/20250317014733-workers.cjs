@@ -3,13 +3,14 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-
     await queryInterface.bulkInsert('colaboradores', [
       {
         nome: "João da Silva",
         status: "Ativo",
         email: "joao.silva@example.com",
         uidMSK: "JSI123",
+        password: "senha123",
+        type: "default",
         localidade: "SSZ",
         brand: "Maersk Brasil",
         jobTitle: "Motorista",
@@ -26,6 +27,8 @@ module.exports = {
         status: "Ativo",
         email: "maria.oliveira@example.com",
         uidMSK: "MOL456",
+        password: "senha123",
+        type: "default",
         localidade: "SPO",
         brand: "Aliança",
         jobTitle: "Administradora",
@@ -42,6 +45,8 @@ module.exports = {
         status: "Ativo",
         email: "carlos.pereira@example.com",
         uidMSK: "CPE789",
+        password: "senha123",
+        type: "default",
         localidade: "SSZ",
         brand: "Maersk Brasil",
         jobTitle: "Analista",
@@ -58,6 +63,8 @@ module.exports = {
         status: "Ativo",
         email: "ana.costa@example.com",
         uidMSK: "ACO012",
+        password: "senha123",
+        type: "default",
         localidade: "SPO",
         brand: "Aliança",
         jobTitle: "Gerente",
@@ -74,6 +81,8 @@ module.exports = {
         status: "Ativo",
         email: "roberto.souza@example.com",
         uidMSK: "RSO345",
+        password: "senha123",
+        type: "default",
         localidade: "SSZ",
         brand: "Maersk Brasil",
         jobTitle: "Técnico",
@@ -89,8 +98,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-
-    await queryInterface.bulkDelete('colaboradores', null);
-
+    await queryInterface.bulkDelete('colaboradores', null, {});
   }
 };

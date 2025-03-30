@@ -1,4 +1,6 @@
 import HistoricoUtilizacaoVeiculo from '../models/HistoricoUtilizacaoVeiculo.js'
+import Colaborador from '../models/Colaborador.js'
+import Veiculo from '../models/Veiculo.js'
 
 async function createHistorico(req, res) {
     const {
@@ -33,25 +35,47 @@ async function createHistorico(req, res) {
 
 async function getHistoricos(req, res) {
     try {
-        const historicos = await HistoricoUtilizacaoVeiculo.findAll()
-        res.json(historicos)
+        const historicos = await HistoricoUtilizacaoVeiculo.findAll({
+            include: [
+                {
+                    model: Colaborador,
+                    attributes: ['nome', 'uidMSK', 'brand']
+                },
+                {
+                    model: Veiculo,
+                    attributes: ['placa', 'modelo', 'renavan', 'chassi', 'status']
+                }
+            ]
+        });
+        res.json(historicos);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar históricos: ' + error.message })
+        res.status(500).json({ error: 'Erro ao buscar históricos: ' + error.message });
     }
 }
 
 async function getHistoricoById(req, res) {
-    const { id } = req.params
+    const { id } = req.params;
 
     try {
-        const historico = await HistoricoUtilizacaoVeiculo.findByPk(id)
+        const historico = await HistoricoUtilizacaoVeiculo.findByPk(id, {
+            include: [
+                {
+                    model: Colaborador,
+                    attributes: ['nome', 'uidMSK', 'brand']
+                },
+                {
+                    model: Veiculo,
+                    attributes: ['placa', 'modelo', 'renavan', 'chassi', 'status']
+                }
+            ]
+        });
         if (historico) {
-            res.json(historico.toJSON())
+            res.json(historico.toJSON());
         } else {
-            res.status(404).json({ error: 'Histórico não encontrado' })
+            res.status(404).json({ error: 'Histórico não encontrado' });
         }
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar histórico: ' + error.message })
+        res.status(500).json({ error: 'Erro ao buscar histórico: ' + error.message });
     }
 }
 

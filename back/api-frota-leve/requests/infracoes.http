@@ -1,0 +1,61 @@
+POST http://localhost:3000/infracao
+Content-Type: application/json
+
+{
+  "tipo": "semparar",
+  "placa": "ABC1234",
+  "colaboradorUid": "COL001",
+  "veiculoId": 123,
+  "costCenter": "Centro 1",
+  "dataInfracao": "2025-03-15T00:00:00Z",
+  "tag": "TAG001",
+  "hora": "08:30",
+  "valor": 50.00,
+  "prefixo": "PFX001",
+  "marca": "Marca A",
+  "categoria": "Categoria A",
+  "rodovia": "Rodovia 1",
+  "praca": "Praça 1"
+}
+
+###
+
+POST http://localhost:3000/infracao
+Content-Type: application/json
+
+{
+  "tipo": "multa",
+  "placa": "DEF5678",
+  "costCenter": "Centro 2",
+  "dataInfracao": "2025-04-10T00:00:00Z",
+  "nome": "João da Silva",
+  "dataEnvio": "2025-04-11T00:00:00Z",
+  "valorMulta": 200.00,
+  "codigoMulta": "MULTA001",
+  "indicacaoLimite": "Sim",
+  "statusResposta": "Pendente",
+  "reconhecimento": false,
+  "enviadoParaRH": true
+}
+
+###
+
+GET http://localhost:3000/infracoes
+
+###
+
+GET http://localhost:3000/infracao/1
+
+###
+
+PUT http://localhost:3000/infracao/1
+Content-Type: application/json
+
+{
+  "statusResposta": "Respondido",
+  "reconhecimento": true
+}
+
+###
+
+DELETE http://localhost:3000/infracao/1

@@ -24,7 +24,7 @@ GET http://localhost:3000/colaboradores
 
 ###
 
-GET http://localhost:3000/colaborador/6
+GET http://localhost:3000/colaborador/1
 
 ###
 

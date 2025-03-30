@@ -87,6 +87,21 @@ async function getVehicleByID(req, res) {
     }
 }
 
+async function getVehicleByMskID(req, res) {
+    const { uidMSK } = req.params
+
+    try {
+        const vehicle = await Veiculo.findByPk(uidMSK)
+        if (vehicle) {
+            res.json(vehicle.toJSON())
+        } else {
+            res.status(404).json({ error: 'Nenhum veículo encontrado para o UID MSK informado' })
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar veículo: ' + error.message })
+    }
+}
+
 async function getVehicleByPlate(req, res) {
     const { placa } = req.params
 
@@ -197,6 +212,7 @@ export default {
     createVehicle,
     getVehicles,
     getVehicleByID,
+    getVehicleByMskID,
     getVehicleByPlate,
     updateVehicle,
     deleteVehicle
