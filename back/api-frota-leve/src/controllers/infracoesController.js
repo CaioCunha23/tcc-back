@@ -18,7 +18,6 @@ async function createInfracao(req, res) {
         praca,
         nome,
         dataEnvio,
-        valorMulta,
         codigoMulta,
         indicacaoLimite,
         statusResposta,
@@ -43,7 +42,6 @@ async function createInfracao(req, res) {
         praca,
         nome,
         dataEnvio,
-        valorMulta,
         codigoMulta,
         indicacaoLimite,
         statusResposta,
@@ -108,7 +106,6 @@ async function updateInfracao(req, res) {
         praca,
         nome,
         dataEnvio,
-        valorMulta,
         codigoMulta,
         indicacaoLimite,
         statusResposta,
@@ -138,7 +135,6 @@ async function updateInfracao(req, res) {
         if (praca !== undefined) infracao.praca = praca
         if (nome !== undefined) infracao.nome = nome
         if (dataEnvio !== undefined) infracao.dataEnvio = dataEnvio
-        if (valorMulta !== undefined) infracao.valorMulta = valorMulta
         if (codigoMulta !== undefined) infracao.codigoMulta = codigoMulta
         if (indicacaoLimite !== undefined) infracao.indicacaoLimite = indicacaoLimite
         if (statusResposta !== undefined) infracao.statusResposta = statusResposta

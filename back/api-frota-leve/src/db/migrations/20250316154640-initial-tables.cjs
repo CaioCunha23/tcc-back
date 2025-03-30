@@ -326,10 +326,6 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: true
       },
-      valorMulta: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: true
-      },
       codigoMulta: {
         type: Sequelize.STRING,
         allowNull: true

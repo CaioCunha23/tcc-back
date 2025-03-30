@@ -30,7 +30,7 @@ Content-Type: application/json
   "dataInfracao": "2025-04-10T00:00:00Z",
   "nome": "João da Silva",
   "dataEnvio": "2025-04-11T00:00:00Z",
-  "valorMulta": 200.00,
+  "valor": 200.00,
   "codigoMulta": "MULTA001",
   "indicacaoLimite": "Sim",
   "statusResposta": "Pendente",

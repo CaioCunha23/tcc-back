@@ -28,7 +28,8 @@ export const Colaborador = database.define('colaborador', {
     },
     password: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true,
+        defaultValue: 'default'
     },
     type: {
         type: Sequelize.STRING,

@@ -1,57 +1,40 @@
 import Colaborador from '../models/Colaborador.js'
+import Infracao from '../models/Infracao.js'
 
 async function createWorker(req, res) {
+    console.log("Recebido no backend:", req.body); // 🔍 Verificar o que chega realmente
+
     const {
-        nome,
-        status,
-        email,
-        uidMSK,
-        password,
-        type,
-        localidade,
-        brand,
-        jobTitle,
-        cpf,
-        usaEstacionamento,
-        cidadeEstacionamento,
-        cnh,
-        tipoCNH
-    } = req.body
+        nome, status, email, uidMSK, password, type,
+        localidade, brand, jobTitle, cpf, usaEstacionamento,
+        cidadeEstacionamento, cnh, tipoCNH
+    } = req.body;
 
-    const worker = Colaborador.build({
-        nome,
-        status,
-        email,
-        uidMSK,
-        password,
-        type,
-        localidade,
-        brand,
-        jobTitle,
-        cpf,
-        usaEstacionamento,
-        cidadeEstacionamento,
-        cnh,
-        tipoCNH
-    })
-
-    try {
-        await worker.validate()
-    } catch (error) {
-        return res.status(400).json({ error: 'Informações do colaborador inválidas: ' + error.message })
+    if (!nome || !email || !uidMSK || !cpf || !cnh || !tipoCNH || !localidade || !brand || !jobTitle) {
+        return res.status(400).json({ error: "Campos obrigatórios faltando." });
     }
 
     try {
-        await worker.save()
-        res.status(201).json(worker.toJSON())
+        const worker = await Colaborador.create({
+            nome, status, email, uidMSK, password, type,
+            localidade, brand, jobTitle, cpf, usaEstacionamento,
+            cidadeEstacionamento, cnh, tipoCNH
+        });
+        res.status(201).json(worker);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao criar colaborador: ' + error.message })
+        console.error("Erro ao salvar no banco:", error);
+        res.status(500).json({ error: "Erro ao criar colaborador: " + error.message });
     }
 }
 
 async function getWorkers(req, res) {
     try {
-        const workers = await Colaborador.findAll()
+        const workers = await Colaborador.findAll({
+            include: [{
+                model: Infracao,
+                attributes: ['valor']
+            }]
+        })
         res.json(workers)
     } catch (error) {
         res.status(500).json({ error: 'Erro ao buscar colaboradores: ' + error.message })

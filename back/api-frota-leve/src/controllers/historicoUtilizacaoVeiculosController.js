@@ -39,7 +39,7 @@ async function getHistoricos(req, res) {
             include: [
                 {
                     model: Colaborador,
-                    attributes: ['nome', 'uidMSK', 'brand']
+                    attributes: ['nome', 'brand']
                 },
                 {
                     model: Veiculo,
@@ -61,7 +61,7 @@ async function getHistoricoById(req, res) {
             include: [
                 {
                     model: Colaborador,
-                    attributes: ['nome', 'uidMSK', 'brand']
+                    attributes: ['nome', 'brand']
                 },
                 {
                     model: Veiculo,

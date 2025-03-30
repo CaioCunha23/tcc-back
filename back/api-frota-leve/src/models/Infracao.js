@@ -80,10 +80,6 @@ export const Infracao = database.define('infracao', {
         type: Sequelize.DATE,
         allowNull: true
     },
-    valorMulta: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: true
-    },
     codigoMulta: {
         type: Sequelize.STRING,
         allowNull: true
