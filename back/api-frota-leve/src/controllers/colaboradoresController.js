@@ -2,7 +2,7 @@ import Colaborador from '../models/Colaborador.js'
 import Infracao from '../models/Infracao.js'
 
 async function createWorker(req, res) {
-    console.log("Recebido no backend:", req.body); // 🔍 Verificar o que chega realmente
+    console.log("Recebido no backend:", req.body);
 
     const {
         nome, status, email, uidMSK, password, type,

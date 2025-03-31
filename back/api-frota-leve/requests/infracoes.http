@@ -2,15 +2,15 @@ POST http://localhost:3000/infracao
 Content-Type: application/json
 
 {
-  "tipo": "semparar",
+  "tipo": "multa",
   "placa": "ABC1234",
-  "colaboradorUid": "COL001",
-  "veiculoId": 123,
+  "colaboradorUid": "JSI123",
+  "veiculoId": 1,
   "costCenter": "Centro 1",
   "dataInfracao": "2025-03-15T00:00:00Z",
   "tag": "TAG001",
   "hora": "08:30",
-  "valor": 50.00,
+  "valor": 150.00,
   "prefixo": "PFX001",
   "marca": "Marca A",
   "categoria": "Categoria A",
@@ -24,18 +24,20 @@ POST http://localhost:3000/infracao
 Content-Type: application/json
 
 {
-  "tipo": "multa",
+  "tipo": "sem parar",
   "placa": "DEF5678",
+  "colaboradorUid": "MOL456",
+  "veiculoId": 2,
   "costCenter": "Centro 2",
-  "dataInfracao": "2025-04-10T00:00:00Z",
-  "nome": "João da Silva",
-  "dataEnvio": "2025-04-11T00:00:00Z",
-  "valor": 200.00,
-  "codigoMulta": "MULTA001",
-  "indicacaoLimite": "Sim",
-  "statusResposta": "Pendente",
-  "reconhecimento": false,
-  "enviadoParaRH": true
+  "dataInfracao": "2025-03-15T00:00:00Z",
+  "tag": "TAG001",
+  "hora": "08:30",
+  "valor": 35.50,
+  "prefixo": "PFX001",
+  "marca": "Marca A",
+  "categoria": "Categoria A",
+  "rodovia": "Rodovia 1",
+  "praca": "Praça 1"
 }
 
 ###

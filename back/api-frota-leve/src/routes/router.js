@@ -7,6 +7,7 @@ import veiculosController from '../controllers/veiculosController.js';
 import colaboradoresController from '../controllers/colaboradoresController.js';
 import historicoUtilizacaoVeiculosController from '../controllers/historicoUtilizacaoVeiculosController.js';
 import infracoesController from '../controllers/infracoesController.js';
+import dashboardMetricsController from '../controllers/metricsController.js';
 
 router.post('/login', authService.login);
 router.post('/eu', authService.pegarUsuarioDoToken);
@@ -37,5 +38,8 @@ router.get('/infracoes', infracoesController.getInfracoes);
 router.get('/infracao/:id', infracoesController.getInfracaoById);
 router.put('/infracao/:id', infracoesController.updateInfracao);
 router.delete('/infracao/:id', infracoesController.deleteInfracao);
+
+router.get('/dashboard-metrics', dashboardMetricsController.getDashboardMetrics);
+router.get('/infracoes-chart-data', dashboardMetricsController.getInfracoesChartData);
 
 export default router;
