@@ -35,6 +35,7 @@ async function getWorkers(req, res) {
                 attributes: ['valor']
             }]
         })
+        console.log(JSON.stringify(workers, null, 2))
         res.json(workers)
     } catch (error) {
         res.status(500).json({ error: 'Erro ao buscar colaboradores: ' + error.message })
