@@ -80,16 +80,25 @@ export const Veiculo = database.define('veiculo', {
         allowNull: false
     },
     mensalidade: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        get() {
+            return this.getDataValue('mensalidade') * 100;
+        }
     },
     budget: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        get() {
+            return this.getDataValue('budget') * 100;
+        }
     },
     multa: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: false
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        get() {
+            return this.getDataValue('multa') * 100;
+        }
     },
     proximaRevisao: {
         type: Sequelize.DATE,

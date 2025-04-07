@@ -119,7 +119,134 @@ async function getInfracoesChartData(req, res) {
     }
 }
 
+export async function getColaboradorMaiorAumento(req, res) {
+    try {
+        const now = new Date();
+
+        // Define os períodos:
+        const currentPeriodStart = new Date();
+        currentPeriodStart.setDate(now.getDate() - 30);
+        const previousPeriodStart = new Date();
+        previousPeriodStart.setDate(now.getDate() - 60);
+
+        // 1. Agrupa infrações por colaborador para o período atual (últimos 30 dias)
+        const currentCounts = await Infracao.findAll({
+            attributes: [
+                'colaboradorUid',
+                [Infracao.sequelize.fn('COUNT', Infracao.sequelize.col('id')), 'currentCount']
+            ],
+            where: {
+                dataInfracao: {
+                    [Op.between]: [currentPeriodStart, now]
+                }
+            },
+            group: ['colaboradorUid']
+        });
+
+        // 2. Agrupa infrações por colaborador para o período anterior (30 a 60 dias atrás)
+        const previousCounts = await Infracao.findAll({
+            attributes: [
+                'colaboradorUid',
+                [Infracao.sequelize.fn('COUNT', Infracao.sequelize.col('id')), 'previousCount']
+            ],
+            where: {
+                dataInfracao: {
+                    [Op.between]: [previousPeriodStart, currentPeriodStart]
+                }
+            },
+            group: ['colaboradorUid']
+        });
+
+        // Cria um loop de repetição para acesso rápido aos dados do período anterior
+        const previousMap = {};
+        previousCounts.forEach(record => {
+            previousMap[record.colaboradorUid] = parseInt(record.get('previousCount'));
+        });
+
+        // Prepara a lista de resultados, calculando a variação percentual
+        const results = [];
+        currentCounts.forEach(record => {
+            const colaboradorUid = record.colaboradorUid;
+            const currentCount = parseInt(record.get('currentCount'));
+            const previousCount = previousMap[colaboradorUid] || 0;
+            let growth = 0;
+            if (previousCount > 0) {
+                growth = ((currentCount - previousCount) / previousCount) * 100;
+            } else if (currentCount > 0) {
+                // Se não houve registros no período anterior, podemos definir crescimento arbitrário
+                growth = 100;
+            }
+            results.push({
+                colaboradorUid,
+                currentCount,
+                previousCount,
+                growth: parseFloat(growth.toFixed(2))
+            });
+        });
+
+        // Ordena os resultados pelo crescimento (descendente)
+        results.sort((a, b) => b.growth - a.growth);
+
+        return res.json(results);
+    } catch (error) {
+        console.error("Erro no endpoint 'colaborador-maior-aumento':", error);
+        return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+}
+
+export async function getTopOffenders(req, res) {
+    try {
+        const now = new Date();
+        // Definindo o período do mês anterior: de 60 dias atrás até 30 dias atrás.
+        const previousPeriodStart = new Date();
+        previousPeriodStart.setDate(now.getDate() - 60);
+        const previousPeriodEnd = new Date();
+        previousPeriodEnd.setDate(now.getDate() - 30);
+
+        // 1. Total de infrações no período anterior.
+        const totalInfractions = await Infracao.count({
+            where: {
+                dataInfracao: { [Op.between]: [previousPeriodStart, previousPeriodEnd] }
+            }
+        });
+
+        // 2. Agrupa as infrações por colaborador no período anterior.
+        const offenders = await Infracao.findAll({
+            attributes: [
+                'colaboradorUid',
+                [Infracao.sequelize.fn('COUNT', Infracao.sequelize.col('id')), 'infractionCount']
+            ],
+            where: {
+                dataInfracao: { [Op.between]: [previousPeriodStart, previousPeriodEnd] }
+            },
+            group: ['colaboradorUid']
+        });
+
+        // 3. Calcula a porcentagem de infrações de cada colaborador em relação ao total.
+        const results = offenders.map(record => {
+            const infractionCount = parseInt(record.get('infractionCount'));
+            const percentage = totalInfractions > 0 ? (infractionCount / totalInfractions) * 100 : 0;
+            return {
+                colaboradorUid: record.colaboradorUid,
+                infractionCount,
+                percentage: parseFloat(percentage.toFixed(2))
+            };
+        });
+
+        // 4. Ordena os resultados por porcentagem e retorna os 5 principais.
+        results.sort((a, b) => b.percentage - a.percentage);
+        const topFive = results.slice(0, 5);
+
+        return res.json(topFive);
+    } catch (error) {
+        console.error("Erro no endpoint 'top-offenders':", error);
+        return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+}
+
 export default {
     getDashboardMetrics,
-    getInfracoesChartData
+    getInfracoesChartData,
+    getColaboradorMaiorAumento,
+    getTopOffenders
 };

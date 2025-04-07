@@ -50,6 +50,10 @@ GET http://localhost:3000/infracao/1
 
 ###
 
+GET http://localhost:3000/infracoes/JSI123
+
+###
+
 PUT http://localhost:3000/infracao/1
 Content-Type: application/json
 

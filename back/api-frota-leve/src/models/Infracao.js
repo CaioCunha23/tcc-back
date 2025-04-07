@@ -49,8 +49,11 @@ export const Infracao = database.define('infracao', {
         allowNull: true
     },
     valor: {
-        type: Sequelize.DECIMAL(10, 2),
-        allowNull: true
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        get() {
+            return this.getDataValue('valor') * 100;
+        }
     },
     prefixo: {
         type: Sequelize.STRING,
@@ -110,10 +113,10 @@ export const Infracao = database.define('infracao', {
         allowNull: false,
         defaultValue: Sequelize.fn('NOW')
     }
-}, 
-{
-    tableName: 'infracoes'
-}
+},
+    {
+        tableName: 'infracoes'
+    }
 );
 
 export default Infracao;

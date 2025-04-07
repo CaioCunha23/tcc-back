@@ -36,10 +36,13 @@ router.delete('/historico/:id', historicoUtilizacaoVeiculosController.deleteHist
 router.post('/infracao', infracoesController.createInfracao);
 router.get('/infracoes', infracoesController.getInfracoes);
 router.get('/infracao/:id', infracoesController.getInfracaoById);
+router.get('/infracoes/:uidMSK', infracoesController.getInfracaoByUidMSK);
 router.put('/infracao/:id', infracoesController.updateInfracao);
 router.delete('/infracao/:id', infracoesController.deleteInfracao);
 
 router.get('/dashboard-metrics', dashboardMetricsController.getDashboardMetrics);
 router.get('/infracoes-chart-data', dashboardMetricsController.getInfracoesChartData);
+router.get('/dashboard-metrics-colaborador-maior-aumento', dashboardMetricsController.getColaboradorMaiorAumento);
+router.get('/top-offenders', dashboardMetricsController.getTopOffenders);
 
 export default router;

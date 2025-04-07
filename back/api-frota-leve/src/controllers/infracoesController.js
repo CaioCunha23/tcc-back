@@ -87,6 +87,30 @@ async function getInfracaoById(req, res) {
     }
 }
 
+export async function getInfracaoByUidMSK(req, res) {
+    const { uidMSK } = req.params;
+    const { last30 } = req.query;
+
+    try {
+        let infractions = await Infracao.findAll({
+            where: { colaboradorUid: uidMSK },
+        });
+
+        if (last30 === "true") {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            infractions = infractions.filter(infraction =>
+                new Date(infraction.dataInfracao) >= thirtyDaysAgo
+            );
+        }
+
+        return res.json(infractions);
+    } catch (error) {
+        console.error("Erro ao buscar infrações:", error);
+        return res.status(500).json({ error: "Erro ao buscar infrações" });
+    }
+}
+
 async function updateInfracao(req, res) {
     const { id } = req.params
     const {
@@ -182,6 +206,7 @@ export default {
     createInfracao,
     getInfracoes,
     getInfracaoById,
+    getInfracaoByUidMSK,
     updateInfracao,
     deleteInfracao
 }
