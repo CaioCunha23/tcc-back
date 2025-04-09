@@ -32,8 +32,10 @@ async function getDashboardMetrics(req, res) {
 
         // Calcula a variação percentual se o período anterior tiver valor > 0
         let growthMultas = 0;
+        let growthMultasPercent = 0;
         if (previousMultas > 0) {
-            growthMultas = ((currentMultas - previousMultas) / previousMultas) * 100;
+            growthMultas = currentMultas - previousMultas;
+            growthMultasPercent = ((currentMultas - previousMultas) / previousMultas) * 100;
         }
 
         // 3. Para 'sem parar': soma dos valores do mês atual e do mês anterior
@@ -53,8 +55,10 @@ async function getDashboardMetrics(req, res) {
 
         // Calcula a variação percentual se o período anterior tiver valor > 0
         let growthSemParar = 0;
+        let growthSemPararPercent = 0;
         if (previousSemParar > 0) {
-            growthSemParar = ((currentSemParar - previousSemParar) / previousSemParar) * 100;
+            growthSemParar = currentSemParar - previousSemParar;
+            growthSemPararPercent = ((currentSemParar - previousSemParar) / previousSemParar) * 100;
         }
 
         // Outras métricas relacionadas aos veículos
@@ -71,8 +75,10 @@ async function getDashboardMetrics(req, res) {
         return res.json({
             totalInfractionsValue: parseFloat(totalInfractionsValue),
             // Arredonda para uma casa decimal
-            growthMultas: parseFloat(growthMultas.toFixed(1)),
-            growthSemParar: parseFloat(growthSemParar.toFixed(1)),
+            growthMultas,
+            growthMultasPercent,
+            growthSemParar,
+            growthSemPararPercent,
             vehiclesInUse,
             vehiclesInMaintenance,
             vehiclesAvailable
