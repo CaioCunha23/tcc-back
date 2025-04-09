@@ -16,12 +16,12 @@ export const HistoricoUtilizacaoVeiculo = database.define('historico_utilizacao_
             key: 'uidMSK'
         }
     },
-    veiculoId: {
-        type: Sequelize.INTEGER,
+    veiculoPlaca: {
+        type: Sequelize.STRING,
         allowNull: false,
         references: {
             model: 'veiculos',
-            key: 'id'
+            key: 'placa'
         }
     },
     dataInicio: {

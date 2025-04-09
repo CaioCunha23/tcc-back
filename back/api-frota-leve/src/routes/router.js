@@ -44,5 +44,7 @@ router.get('/dashboard-metrics', dashboardMetricsController.getDashboardMetrics)
 router.get('/infracoes-chart-data', dashboardMetricsController.getInfracoesChartData);
 router.get('/dashboard-metrics-colaborador-maior-aumento', dashboardMetricsController.getColaboradorMaiorAumento);
 router.get('/top-offenders', dashboardMetricsController.getTopOffenders);
+router.get('/veiculos-manutencao', dashboardMetricsController.getVeiculosProximosManutencao);
+router.get('/vencimento-multas', dashboardMetricsController.getMultasProximasVencer);
 
 export default router;

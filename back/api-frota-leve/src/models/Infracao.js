@@ -12,10 +12,6 @@ export const Infracao = database.define('infracao', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    placa: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
     colaboradorUid: {
         type: Sequelize.STRING(6),
         allowNull: false,
@@ -24,12 +20,12 @@ export const Infracao = database.define('infracao', {
             key: 'uidMSK'
         }
     },
-    veiculoId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+    placaVeiculo: {
+        type: Sequelize.STRING,
+        allowNull: false,
         references: {
             model: 'veiculos',
-            key: 'id'
+            key: 'placa'
         }
     },
     costCenter: {

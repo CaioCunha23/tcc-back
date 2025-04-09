@@ -4,68 +4,73 @@ import Veiculo from '../models/Veiculo.js';
 
 async function getDashboardMetrics(req, res) {
     try {
-        // Define os períodos: últimos 30 dias (atual) e os 30 dias anteriores (anterior)
         const now = new Date();
-        const currentPeriodStart = new Date(now);
-        currentPeriodStart.setDate(now.getDate() - 30);
-        const previousPeriodStart = new Date(now);
-        previousPeriodStart.setDate(now.getDate() - 60);
+        // Define início do mês atual (primeiro dia do mês atual)
+        const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        // Define início do mês anterior (primeiro dia do mês anterior)
+        const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        // Define o fim do mês anterior (último dia do mês anterior)
+        const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
         // 1. Total gasto com infrações (soma de todos os valores)
         const totalInfractionsValue = (await Infracao.sum('valor')) || 0;
 
-        // 2. Para 'multas': soma dos valores do período atual e anterior
+        // 2. Para 'multas': soma dos valores do mês atual e do mês anterior
         const currentMultas = (await Infracao.sum('valor', {
             where: {
                 tipo: 'multa',
-                dataInfracao: { [Op.between]: [currentPeriodStart, now] }
+                dataInfracao: { [Op.between]: [currentMonthStart, now] }
             }
         })) || 0;
+
         const previousMultas = (await Infracao.sum('valor', {
             where: {
                 tipo: 'multa',
-                dataInfracao: { [Op.between]: [previousPeriodStart, currentPeriodStart] }
+                dataInfracao: { [Op.between]: [previousMonthStart, previousMonthEnd] }
             }
         })) || 0;
+
         // Calcula a variação percentual se o período anterior tiver valor > 0
         let growthMultas = 0;
         if (previousMultas > 0) {
             growthMultas = ((currentMultas - previousMultas) / previousMultas) * 100;
         }
 
-        // 3. Para 'sem parar': soma dos valores do período atual e anterior
+        // 3. Para 'sem parar': soma dos valores do mês atual e do mês anterior
         const currentSemParar = (await Infracao.sum('valor', {
             where: {
                 tipo: 'sem parar',
-                dataInfracao: { [Op.between]: [currentPeriodStart, now] }
+                dataInfracao: { [Op.between]: [currentMonthStart, now] }
             }
         })) || 0;
+
         const previousSemParar = (await Infracao.sum('valor', {
             where: {
                 tipo: 'sem parar',
-                dataInfracao: { [Op.between]: [previousPeriodStart, currentPeriodStart] }
+                dataInfracao: { [Op.between]: [previousMonthStart, previousMonthEnd] }
             }
         })) || 0;
+
         // Calcula a variação percentual se o período anterior tiver valor > 0
         let growthSemParar = 0;
         if (previousSemParar > 0) {
             growthSemParar = ((currentSemParar - previousSemParar) / previousSemParar) * 100;
         }
 
+        // Outras métricas relacionadas aos veículos
         const vehiclesInUse = await Veiculo.count({
             where: { status: 'em uso' }
         });
-
         const vehiclesInMaintenance = await Veiculo.count({
             where: { status: 'em manutenção' }
         });
-
         const vehiclesAvailable = await Veiculo.count({
             where: { status: 'Disponível' }
         });
 
         return res.json({
             totalInfractionsValue: parseFloat(totalInfractionsValue),
+            // Arredonda para uma casa decimal
             growthMultas: parseFloat(growthMultas.toFixed(1)),
             growthSemParar: parseFloat(growthSemParar.toFixed(1)),
             vehiclesInUse,
@@ -122,14 +127,13 @@ async function getInfracoesChartData(req, res) {
 export async function getColaboradorMaiorAumento(req, res) {
     try {
         const now = new Date();
+        // Define o início do mês atual (primeiro dia do mês atual)
+        const currentPeriodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        // Define o período do mês anterior: do primeiro dia do mês anterior até o último dia do mês anterior
+        const previousPeriodStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const previousPeriodEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
-        // Define os períodos:
-        const currentPeriodStart = new Date();
-        currentPeriodStart.setDate(now.getDate() - 30);
-        const previousPeriodStart = new Date();
-        previousPeriodStart.setDate(now.getDate() - 60);
-
-        // 1. Agrupa infrações por colaborador para o período atual (últimos 30 dias)
+        // 1. Agrupa infrações por colaborador para o período atual (desde o início do mês atual até agora)
         const currentCounts = await Infracao.findAll({
             attributes: [
                 'colaboradorUid',
@@ -143,7 +147,7 @@ export async function getColaboradorMaiorAumento(req, res) {
             group: ['colaboradorUid']
         });
 
-        // 2. Agrupa infrações por colaborador para o período anterior (30 a 60 dias atrás)
+        // 2. Agrupa infrações por colaborador para o mês anterior (período completo)
         const previousCounts = await Infracao.findAll({
             attributes: [
                 'colaboradorUid',
@@ -151,13 +155,13 @@ export async function getColaboradorMaiorAumento(req, res) {
             ],
             where: {
                 dataInfracao: {
-                    [Op.between]: [previousPeriodStart, currentPeriodStart]
+                    [Op.between]: [previousPeriodStart, previousPeriodEnd]
                 }
             },
             group: ['colaboradorUid']
         });
 
-        // Cria um loop de repetição para acesso rápido aos dados do período anterior
+        // Cria um mapa para acesso rápido aos dados do período anterior
         const previousMap = {};
         previousCounts.forEach(record => {
             previousMap[record.colaboradorUid] = parseInt(record.get('previousCount'));
@@ -173,7 +177,7 @@ export async function getColaboradorMaiorAumento(req, res) {
             if (previousCount > 0) {
                 growth = ((currentCount - previousCount) / previousCount) * 100;
             } else if (currentCount > 0) {
-                // Se não houve registros no período anterior, podemos definir crescimento arbitrário
+                // Se não houve registros no período anterior, atribui crescimento arbitrário (100%)
                 growth = 100;
             }
             results.push({
@@ -184,7 +188,7 @@ export async function getColaboradorMaiorAumento(req, res) {
             });
         });
 
-        // Ordena os resultados pelo crescimento (descendente)
+        // Ordena os resultados pelo crescimento (em ordem decrescente)
         results.sort((a, b) => b.growth - a.growth);
 
         return res.json(results);
@@ -197,20 +201,18 @@ export async function getColaboradorMaiorAumento(req, res) {
 export async function getTopOffenders(req, res) {
     try {
         const now = new Date();
-        // Definindo o período do mês anterior: de 60 dias atrás até 30 dias atrás.
-        const previousPeriodStart = new Date();
-        previousPeriodStart.setDate(now.getDate() - 60);
-        const previousPeriodEnd = new Date();
-        previousPeriodEnd.setDate(now.getDate() - 30);
+        // Define o período do mês anterior: do primeiro dia ao último dia do mês anterior
+        const previousPeriodStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const previousPeriodEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
-        // 1. Total de infrações no período anterior.
+        // 1. Total de infrações no mês anterior.
         const totalInfractions = await Infracao.count({
             where: {
                 dataInfracao: { [Op.between]: [previousPeriodStart, previousPeriodEnd] }
             }
         });
 
-        // 2. Agrupa as infrações por colaborador no período anterior.
+        // 2. Agrupa as infrações por colaborador para o mês anterior.
         const offenders = await Infracao.findAll({
             attributes: [
                 'colaboradorUid',
@@ -222,7 +224,7 @@ export async function getTopOffenders(req, res) {
             group: ['colaboradorUid']
         });
 
-        // 3. Calcula a porcentagem de infrações de cada colaborador em relação ao total.
+        // 3. Calcula a porcentagem de infrações de cada colaborador em relação ao total do mês anterior.
         const results = offenders.map(record => {
             const infractionCount = parseInt(record.get('infractionCount'));
             const percentage = totalInfractions > 0 ? (infractionCount / totalInfractions) * 100 : 0;
@@ -244,9 +246,84 @@ export async function getTopOffenders(req, res) {
     }
 }
 
+export async function getVeiculosProximosManutencao(req, res) {
+    try {
+        const now = new Date();
+        // Define sempre o período de 30 dias à frente
+        const thresholdDays = 30;
+        const upperLimit = new Date();
+        upperLimit.setDate(now.getDate() + thresholdDays);
+
+        // Busca os veículos cuja próxima revisão esteja entre hoje e os próximos 30 dias
+        const vehicles = await Veiculo.findAll({
+            where: {
+                proximaRevisao: {
+                    [Op.between]: [now, upperLimit]
+                }
+            },
+            order: [['proximaRevisao', 'ASC']]
+        });
+
+        // Calcula quantos dias faltam para a manutenção e insere essa informação no retorno
+        const vehiclesWithDays = vehicles.map(vehicle => {
+            const proximaRevisao = new Date(vehicle.proximaRevisao);
+            const diffTime = proximaRevisao.getTime() - now.getTime();
+            const daysUntilMaintenance = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return {
+                ...vehicle.dataValues,
+                daysUntilMaintenance
+            };
+        });
+
+        return res.json(vehiclesWithDays);
+    } catch (error) {
+        console.error("Erro ao buscar veículos próximos da manutenção:", error);
+        return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+}
+
+export async function getMultasProximasVencer(req, res) {
+    try {
+        const now = new Date();
+        // Define o período: próximos 30 dias
+        const thresholdDays = 30;
+        const upperLimit = new Date();
+        upperLimit.setDate(now.getDate() + thresholdDays);
+
+        // Busca as multas cuja data de vencimento esteja entre hoje e os próximos 30 dias
+        const multas = await Infracao.findAll({
+            where: {
+                tipo: 'multa',
+                indicacaoLimite: {
+                    [Op.between]: [now, upperLimit]
+                }
+            },
+            order: [['indicacaoLimite', 'ASC']]
+        });
+
+        // Acrescenta a informação de quantos dias faltam para o vencimento
+        const multasWithDaysUntilVencimento = multas.map(multa => {
+            const dataVencimento = new Date(multa.indicacaoLimite);
+            const diffTime = dataVencimento.getTime() - now.getTime();
+            const daysUntilVencimento = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return {
+                ...multa.dataValues,
+                daysUntilVencimento
+            };
+        });
+
+        return res.json(multasWithDaysUntilVencimento);
+    } catch (error) {
+        console.error("Erro ao buscar multas próximas de vencer:", error);
+        return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+}
+
 export default {
     getDashboardMetrics,
     getInfracoesChartData,
     getColaboradorMaiorAumento,
-    getTopOffenders
+    getTopOffenders,
+    getVeiculosProximosManutencao,
+    getMultasProximasVencer
 };

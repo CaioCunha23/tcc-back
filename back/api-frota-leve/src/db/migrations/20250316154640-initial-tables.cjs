@@ -209,12 +209,12 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'RESTRICT'
       },
-      veiculoId: {
-        type: Sequelize.INTEGER,
+      veiculoPlaca: {
+        type: Sequelize.STRING,
         allowNull: false,
         references: {
           model: 'veiculos',
-          key: 'id'
+          key: 'placa'
         },
         onUpdate: 'CASCADE',
         onDelete: 'RESTRICT'
@@ -254,10 +254,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      placa: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
       colaboradorUid: {
         type: Sequelize.STRING(6),
         allowNull: false,
@@ -268,12 +264,12 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'RESTRICT'
       },
-      veiculoId: {
-        type: Sequelize.INTEGER,
+      placaVeiculo: {
+        type: Sequelize.STRING,
         allowNull: true,
         references: {
           model: 'veiculos',
-          key: 'id'
+          key: 'placa'
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'

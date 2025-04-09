@@ -3,9 +3,8 @@ import Infracao from '../models/Infracao.js'
 async function createInfracao(req, res) {
     const {
         tipo,
-        placa,
         colaboradorUid,
-        veiculoId,
+        placaVeiculo,
         costCenter,
         dataInfracao,
         tag,
@@ -27,9 +26,8 @@ async function createInfracao(req, res) {
 
     const infracao = Infracao.build({
         tipo,
-        placa,
         colaboradorUid,
-        veiculoId,
+        placaVeiculo,
         costCenter,
         dataInfracao,
         tag,
@@ -115,9 +113,8 @@ async function updateInfracao(req, res) {
     const { id } = req.params
     const {
         tipo,
-        placa,
         colaboradorUid,
-        veiculoId,
+        placaVeiculo,
         costCenter,
         dataInfracao,
         tag,
@@ -144,9 +141,8 @@ async function updateInfracao(req, res) {
         }
 
         if (tipo) infracao.tipo = tipo
-        if (placa) infracao.placa = placa
         if (colaboradorUid) infracao.colaboradorUid = colaboradorUid
-        if (veiculoId !== undefined) infracao.veiculoId = veiculoId
+        if (placaVeiculo !== undefined) infracao.placaVeiculo = placaVeiculo
         if (costCenter) infracao.costCenter = costCenter
         if (dataInfracao) infracao.dataInfracao = dataInfracao
         if (tag !== undefined) infracao.tag = tag

@@ -3,11 +3,10 @@ Content-Type: application/json
 
 {
   "tipo": "multa",
-  "placa": "ABC1234",
   "colaboradorUid": "JSI123",
-  "veiculoId": 1,
+  "placaVeiculo": "ABC1234",
   "costCenter": "Centro 1",
-  "dataInfracao": "2025-03-15T00:00:00Z",
+  "dataInfracao": "2024-12-15T00:00:00Z",
   "tag": "TAG001",
   "hora": "08:30",
   "valor": 150.00,
@@ -27,7 +26,7 @@ Content-Type: application/json
   "tipo": "sem parar",
   "placa": "DEF5678",
   "colaboradorUid": "MOL456",
-  "veiculoId": 2,
+  "placaVeiculo": ,
   "costCenter": "Centro 2",
   "dataInfracao": "2025-03-15T00:00:00Z",
   "tag": "TAG001",
