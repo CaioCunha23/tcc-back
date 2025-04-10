@@ -2,7 +2,7 @@ POST http://localhost:3000/infracao
 Content-Type: application/json
 
 {
-  "tipo": "multa",
+  "tipo": "sem parar",
   "colaboradorUid": "JSI123",
   "placaVeiculo": "ABC1234",
   "costCenter": "Centro 1",

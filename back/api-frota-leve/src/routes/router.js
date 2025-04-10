@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import multer from 'multer';
 
 const router = Router();
+const upload = multer({ dest: 'uploads/' });
 
 import authService from '../services/authService.js';
 import veiculosController from '../controllers/veiculosController.js';
@@ -18,6 +20,8 @@ router.get('/colaborador/:id', colaboradoresController.getWorkerById);
 router.get('/colaborador/:uidMSK', colaboradoresController.getWorkerByMskID);
 router.put('/colaborador/:id', colaboradoresController.updateWorker);
 router.delete('/colaborador/:id', colaboradoresController.deleteWorker);
+
+router.post('/colaboradores/import', upload.single('file'), colaboradoresController.importCSV);
 
 router.post('/veiculo', veiculosController.createVehicle);
 router.get('/veiculos', veiculosController.getVehicles);

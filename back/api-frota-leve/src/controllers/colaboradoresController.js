@@ -1,5 +1,8 @@
 import Colaborador from '../models/Colaborador.js'
 import Infracao from '../models/Infracao.js'
+import * as csv from 'csv';
+import fs from 'fs';
+import path from 'path';
 
 async function createWorker(req, res) {
     console.log("Recebido no backend:", req.body);
@@ -24,6 +27,78 @@ async function createWorker(req, res) {
     } catch (error) {
         console.error("Erro ao salvar no banco:", error);
         res.status(500).json({ error: "Erro ao criar colaborador: " + error.message });
+    }
+}
+
+async function createWorkerFromCSV(collaboratorData) {
+    const { nome, email, uidMSK, password, type, localidade, brand, jobTitle, cpf, usaEstacionamento, cidadeEstacionamento, cnh, tipoCNH } = collaboratorData;
+
+    if (!nome || !email || !uidMSK || !cpf || !cnh || !tipoCNH || !localidade || !brand || !jobTitle) {
+        return res.status(400).json({ error: "Campos obrigatórios faltando." });
+    }
+
+    try {
+        const worker = await Colaborador.create({
+            nome, email, uidMSK, password, type,
+            localidade, brand, jobTitle, cpf, usaEstacionamento,
+            cidadeEstacionamento, cnh, tipoCNH
+        });
+    } catch (error) {
+        console.error("Erro ao salvar no banco:", error);
+        res.status(500).json({ error: "Erro ao criar colaborador: " + error.message });
+    }
+}
+
+async function importCSV(req, res) {
+    console.log("Arquivo recebido pelo Multer:", req.file);
+
+    if (!req.file) {
+        return res.status(400).json({ error: "Arquivo CSV não enviado." });
+    }
+
+    const filePath = path.resolve(req.file.path);
+    const collaborators = [];
+
+    try {
+        await new Promise((resolve, reject) => {
+            fs.createReadStream(filePath)
+                .pipe(csv.parse({ columns: true, trim: true, delimiter: ';' }))
+                .on('data', (row) => {
+                    console.log("Linha lida:", row);
+                    collaborators.push(row);
+                })
+                .on('end', () => {
+                    console.log("Final do processamento do CSV. Total de linhas:", collaborators.length);
+                    resolve();
+                })
+                .on('error', (error) => {
+                    console.error("Erro ao ler o CSV:", error);
+                    reject(error);
+                });
+        });
+
+        for (const collaboratorData of collaborators) {
+            try {
+                await createWorkerFromCSV(collaboratorData);
+                console.log("Colaborador criado:", collaboratorData);
+            } catch (e) {
+                console.error("Erro ao criar colaborador:", collaboratorData, e);
+            }
+        }
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error("Erro ao remover o arquivo CSV:", err);
+            }
+        });
+        return res.status(201).json({ message: "Colaboradores importados com sucesso!", total: collaborators.length });
+    } catch (error) {
+        console.error("Erro ao processar o CSV:", error);
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error("Erro ao remover o arquivo CSV após erro:", err);
+            }
+        });
+        return res.status(500).json({ error: "Erro ao importar colaboradores: " + error.message });
     }
 }
 
@@ -150,6 +225,8 @@ async function deleteWorker(req, res) {
 
 export default {
     createWorker,
+    createWorkerFromCSV,
+    importCSV,
     getWorkers,
     getWorkerById,
     getWorkerByMskID,
