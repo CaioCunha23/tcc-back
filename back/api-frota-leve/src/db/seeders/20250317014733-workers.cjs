@@ -6,7 +6,7 @@ module.exports = {
     await queryInterface.bulkInsert('colaboradores', [
       {
         nome: "João da Silva",
-        status: "Ativo",
+        status: 1,
         email: "joao.silva@example.com",
         uidMSK: "JSI123",
         password: "senha123",
@@ -24,7 +24,7 @@ module.exports = {
       },
       {
         nome: "Maria Oliveira",
-        status: "Ativo",
+        status: 1,
         email: "maria.oliveira@example.com",
         uidMSK: "MOL456",
         password: "senha123",
@@ -42,7 +42,7 @@ module.exports = {
       },
       {
         nome: "Carlos Pereira",
-        status: "Ativo",
+        status: 1,
         email: "carlos.pereira@example.com",
         uidMSK: "CPE789",
         password: "senha123",
@@ -60,7 +60,7 @@ module.exports = {
       },
       {
         nome: "Ana Costa",
-        status: "Ativo",
+        status: 1,
         email: "ana.costa@example.com",
         uidMSK: "ACO012",
         password: "senha123",
@@ -78,7 +78,7 @@ module.exports = {
       },
       {
         nome: "Roberto Souza",
-        status: "Ativo",
+        status: 1,
         email: "roberto.souza@example.com",
         uidMSK: "RSO345",
         password: "senha123",
@@ -96,7 +96,7 @@ module.exports = {
       },
       {
         nome: "Fernanda Lima",
-        status: "Ativo",
+        status: 1,
         email: "fernanda.lima@example.com",
         uidMSK: "FLI678",
         password: "senha123",
@@ -114,7 +114,7 @@ module.exports = {
       },
       {
         nome: "Diego Matos",
-        status: "Ativo",
+        status: 1,
         email: "diego.matos@example.com",
         uidMSK: "DMA890",
         password: "senha123",
@@ -132,7 +132,7 @@ module.exports = {
       },
       {
         nome: "Juliana Mendes",
-        status: "Ativo",
+        status: 1,
         email: "juliana.mendes@example.com",
         uidMSK: "JME901",
         password: "senha123",
@@ -150,7 +150,7 @@ module.exports = {
       },
       {
         nome: "Bruno Ferreira",
-        status: "Ativo",
+        status: 1,
         email: "bruno.ferreira@example.com",
         uidMSK: "BFE123",
         password: "senha123",
@@ -168,7 +168,7 @@ module.exports = {
       },
       {
         nome: "Larissa Rocha",
-        status: "Ativo",
+        status: 1,
         email: "larissa.rocha@example.com",
         uidMSK: "LRO234",
         password: "senha123",

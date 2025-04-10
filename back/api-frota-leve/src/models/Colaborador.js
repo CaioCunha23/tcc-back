@@ -13,8 +13,8 @@ export const Colaborador = database.define('colaborador', {
         allowNull: false
     },
     status: {
-        type: Sequelize.STRING,
-        defaultValue: 'Ativo'
+        type: Sequelize.BOOLEAN,
+        defaultValue: 1
     },
     email: {
         type: Sequelize.STRING,

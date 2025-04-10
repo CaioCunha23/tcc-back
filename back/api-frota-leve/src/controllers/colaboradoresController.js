@@ -1,5 +1,5 @@
-import Colaborador from '../models/Colaborador.js'
-import Infracao from '../models/Infracao.js'
+import Colaborador from '../models/Colaborador.js';
+import Infracao from '../models/Infracao.js';
 import * as csv from 'csv';
 import fs from 'fs';
 import path from 'path';
@@ -34,7 +34,7 @@ async function createWorkerFromCSV(collaboratorData) {
     const { nome, email, uidMSK, password, type, localidade, brand, jobTitle, cpf, usaEstacionamento, cidadeEstacionamento, cnh, tipoCNH } = collaboratorData;
 
     if (!nome || !email || !uidMSK || !cpf || !cnh || !tipoCNH || !localidade || !brand || !jobTitle) {
-        return res.status(400).json({ error: "Campos obrigatórios faltando." });
+        console.log("Campos obrigatórios faltando.");
     }
 
     try {
@@ -45,11 +45,10 @@ async function createWorkerFromCSV(collaboratorData) {
         });
     } catch (error) {
         console.error("Erro ao salvar no banco:", error);
-        res.status(500).json({ error: "Erro ao criar colaborador: " + error.message });
     }
 }
 
-async function importCSV(req, res) {
+async function importWorkerCSV(req, res) {
     console.log("Arquivo recebido pelo Multer:", req.file);
 
     if (!req.file) {
@@ -226,7 +225,7 @@ async function deleteWorker(req, res) {
 export default {
     createWorker,
     createWorkerFromCSV,
-    importCSV,
+    importWorkerCSV,
     getWorkers,
     getWorkerById,
     getWorkerByMskID,

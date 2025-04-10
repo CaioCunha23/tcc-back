@@ -15,15 +15,15 @@ router.post('/login', authService.login);
 router.post('/eu', authService.pegarUsuarioDoToken);
 
 router.post('/colaborador', colaboradoresController.createWorker);
+router.post('/colaboradores/import', upload.single('file'), colaboradoresController.importWorkerCSV);
 router.get('/colaboradores', colaboradoresController.getWorkers);
 router.get('/colaborador/:id', colaboradoresController.getWorkerById);
 router.get('/colaborador/:uidMSK', colaboradoresController.getWorkerByMskID);
 router.put('/colaborador/:id', colaboradoresController.updateWorker);
 router.delete('/colaborador/:id', colaboradoresController.deleteWorker);
 
-router.post('/colaboradores/import', upload.single('file'), colaboradoresController.importCSV);
-
 router.post('/veiculo', veiculosController.createVehicle);
+router.post('/veiculos/import', upload.single('file'), veiculosController.importVehicleCSV);
 router.get('/veiculos', veiculosController.getVehicles);
 router.get('/veiculo/:id', veiculosController.getVehicleByID);
 router.get('/veiculo/:uidMSK', veiculosController.getVehicleByMskID);
@@ -38,6 +38,7 @@ router.put('/historico/:id', historicoUtilizacaoVeiculosController.updateHistori
 router.delete('/historico/:id', historicoUtilizacaoVeiculosController.deleteHistorico);
 
 router.post('/infracao', infracoesController.createInfracao);
+router.post('/infracoes/import', upload.single('file'), infracoesController.importInfractionCSV);
 router.get('/infracoes', infracoesController.getInfracoes);
 router.get('/infracao/:id', infracoesController.getInfracaoById);
 router.get('/infracoes/:uidMSK', infracoesController.getInfracaoByUidMSK);

@@ -1,4 +1,7 @@
-import Veiculo from '../models/Veiculo.js'
+import Veiculo from '../models/Veiculo.js';
+import * as csv from 'csv';
+import fs from 'fs';
+import path from 'path';
 
 async function createVehicle(req, res) {
     const {
@@ -60,6 +63,138 @@ async function createVehicle(req, res) {
         res.status(201).json(vehicle.toJSON())
     } catch (error) {
         res.status(500).json({ error: 'Erro ao criar veículo: ' + error.message })
+    }
+}
+
+async function createVehicleFromCSV(vehicleData) {
+    const {
+        fornecedor,
+        contrato,
+        placa,
+        renavan,
+        chassi,
+        modelo,
+        cor,
+        status,
+        cliente,
+        perfil,
+        centroCusto,
+        franquiaKM,
+        carroReserva,
+        dataDisponibilizacao,
+        mesesContratados,
+        previsaoDevolucao,
+        mesesFaltantes,
+        mensalidade,
+        budget,
+        multa,
+        proximaRevisao
+    } = vehicleData;
+
+    if (
+        !fornecedor ||
+        !contrato ||
+        !placa ||
+        !renavan ||
+        !chassi ||
+        !modelo ||
+        !cor ||
+        !status ||
+        !cliente ||
+        !perfil ||
+        !centroCusto ||
+        !franquiaKM ||
+        !carroReserva ||
+        !dataDisponibilizacao ||
+        !mesesContratados ||
+        !previsaoDevolucao ||
+        !mesesFaltantes ||
+        !mensalidade ||
+        !budget ||
+        !multa ||
+        !proximaRevisao) {
+        console.log("Campos obrigatórios faltando.");
+    }
+
+    try {
+        const vehicle = await Veiculo.create({
+            fornecedor,
+            contrato,
+            placa,
+            renavan,
+            chassi,
+            modelo,
+            cor,
+            status,
+            cliente,
+            perfil,
+            centroCusto,
+            franquiaKM,
+            carroReserva,
+            dataDisponibilizacao,
+            mesesContratados,
+            previsaoDevolucao,
+            mesesFaltantes,
+            mensalidade,
+            budget,
+            multa,
+            proximaRevisao
+        });
+    } catch (error) {
+        console.error("Erro ao salvar no banco:", error);
+    }
+}
+
+async function importVehicleCSV(req, res) {
+    console.log("Arquivo recebido pelo Multer:", req.file);
+
+    if (!req.file) {
+        return res.status(400).json({ error: "Arquivo CSV não enviado." });
+    }
+
+    const filePath = path.resolve(req.file.path);
+    const vehicles = [];
+
+    try {
+        await new Promise((resolve, reject) => {
+            fs.createReadStream(filePath)
+                .pipe(csv.parse({ columns: true, trim: true, delimiter: ';' }))
+                .on('data', (row) => {
+                    console.log("Linha lida:", row);
+                    vehicles.push(row);
+                })
+                .on('end', () => {
+                    console.log("Final do processamento do CSV. Total de linhas:", vehicles.length);
+                    resolve();
+                })
+                .on('error', (error) => {
+                    console.error("Erro ao ler o CSV:", error);
+                    reject(error);
+                });
+        });
+
+        for (const vehicleData of vehicles) {
+            try {
+                await createWorkerFromCSV(vehicleData);
+                console.log("Veículo criado:", vehicleData);
+            } catch (e) {
+                console.error("Erro ao criar veículo:", vehicleData, e);
+            }
+        }
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error("Erro ao remover o arquivo CSV:", err);
+            }
+        });
+        return res.status(201).json({ message: "Veículos importados com sucesso!", total: vehicles.length });
+    } catch (error) {
+        console.error("Erro ao processar o CSV:", error);
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error("Erro ao remover o arquivo CSV após erro:", err);
+            }
+        });
+        return res.status(500).json({ error: "Erro ao importar veículos: " + error.message });
     }
 }
 
@@ -210,6 +345,8 @@ async function deleteVehicle(req, res) {
 
 export default {
     createVehicle,
+    createVehicleFromCSV,
+    importVehicleCSV,
     getVehicles,
     getVehicleByID,
     getVehicleByMskID,

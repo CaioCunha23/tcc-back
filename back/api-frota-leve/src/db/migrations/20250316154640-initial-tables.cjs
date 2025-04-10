@@ -16,9 +16,9 @@ module.exports = {
         allowNull: false
       },
       status: {
-        type: Sequelize.STRING,
+        type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: 'Ativo'
+        defaultValue: 1
       },
       email: {
         type: Sequelize.STRING,
