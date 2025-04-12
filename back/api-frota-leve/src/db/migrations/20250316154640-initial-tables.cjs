@@ -105,7 +105,7 @@ module.exports = {
         allowNull: false,
         unique: true
       },
-      renavan: {
+      renavam: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true

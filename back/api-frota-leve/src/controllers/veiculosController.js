@@ -8,7 +8,7 @@ async function createVehicle(req, res) {
         fornecedor,
         contrato,
         placa,
-        renavan,
+        renavam,
         chassi,
         modelo,
         cor,
@@ -32,7 +32,7 @@ async function createVehicle(req, res) {
         fornecedor,
         contrato,
         placa,
-        renavan,
+        renavam,
         chassi,
         modelo,
         cor,
@@ -71,7 +71,7 @@ async function createVehicleFromCSV(vehicleData) {
         fornecedor,
         contrato,
         placa,
-        renavan,
+        renavam,
         chassi,
         modelo,
         cor,
@@ -95,7 +95,7 @@ async function createVehicleFromCSV(vehicleData) {
         !fornecedor ||
         !contrato ||
         !placa ||
-        !renavan ||
+        !renavam ||
         !chassi ||
         !modelo ||
         !cor ||
@@ -121,7 +121,7 @@ async function createVehicleFromCSV(vehicleData) {
             fornecedor,
             contrato,
             placa,
-            renavan,
+            renavam,
             chassi,
             modelo,
             cor,
@@ -258,7 +258,7 @@ async function updateVehicle(req, res) {
         fornecedor,
         contrato,
         placa,
-        renavan,
+        renavam,
         chassi,
         modelo,
         cor,
@@ -287,7 +287,7 @@ async function updateVehicle(req, res) {
         if (fornecedor) vehicle.fornecedor = fornecedor
         if (contrato) vehicle.contrato = contrato
         if (placa) vehicle.placa = placa
-        if (renavan) vehicle.renavan = renavan
+        if (renavam) vehicle.renavam = renavam
         if (chassi) vehicle.chassi = chassi
         if (modelo) vehicle.modelo = modelo
         if (cor) vehicle.cor = cor

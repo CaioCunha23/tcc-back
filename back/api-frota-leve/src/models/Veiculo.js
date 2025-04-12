@@ -21,7 +21,7 @@ export const Veiculo = database.define('veiculo', {
         allowNull: false,
         unique: true
     },
-    renavan: {
+    renavam: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true

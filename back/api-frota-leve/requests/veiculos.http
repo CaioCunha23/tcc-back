@@ -5,7 +5,7 @@ Content-Type: application/json
   "fornecedor": "Fornecedor X",
   "contrato": "ContratoXYZ",
   "placa": "ABC-1234",
-  "renavan": "REN12345678",
+  "renavam": "REN12345678",
   "chassi": "CHAS1234567890",
   "modelo": "Modelo A",
   "cor": "Preto",

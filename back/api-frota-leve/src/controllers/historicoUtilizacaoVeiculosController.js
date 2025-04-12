@@ -43,7 +43,7 @@ async function getHistoricos(req, res) {
                 },
                 {
                     model: Veiculo,
-                    attributes: ['placa', 'modelo', 'renavan', 'chassi', 'status']
+                    attributes: ['placa', 'modelo', 'renavam', 'chassi', 'status']
                 }
             ]
         });
@@ -65,7 +65,7 @@ async function getHistoricoById(req, res) {
                 },
                 {
                     model: Veiculo,
-                    attributes: ['placa', 'modelo', 'renavan', 'chassi', 'status']
+                    attributes: ['placa', 'modelo', 'renavam', 'chassi', 'status']
                 }
             ]
         });
