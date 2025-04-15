@@ -57,8 +57,7 @@ PUT http://localhost:3000/infracao/1
 Content-Type: application/json
 
 {
-  "statusResposta": "Respondido",
-  "reconhecimento": true
+  "placaVeiculo": "ABCD123"
 }
 
 ###
