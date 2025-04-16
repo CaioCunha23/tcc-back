@@ -43,8 +43,7 @@ PUT http://localhost:3000/veiculo/1
 Content-Type: application/json
 
 {
-  "status": "Em uso",
-  "budget": 2100.00
+  "fornecedor": "Localiza"
 }
 
 ###

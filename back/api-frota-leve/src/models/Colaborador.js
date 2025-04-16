@@ -14,7 +14,7 @@ export const Colaborador = database.define('colaborador', {
     },
     status: {
         type: Sequelize.BOOLEAN,
-        defaultValue: 1
+        defaultValue: true
     },
     email: {
         type: Sequelize.STRING,

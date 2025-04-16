@@ -171,7 +171,7 @@ async function updateWorker(req, res) {
         }
 
         if (nome) worker.nome = nome
-        if (status) worker.status = status
+        if (status !== undefined) worker.status = status
         if (email) worker.email = email
         if (uidMSK) worker.uidMSK = uidMSK
         if (password) worker.password = password
