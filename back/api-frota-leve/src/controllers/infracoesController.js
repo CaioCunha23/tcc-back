@@ -33,21 +33,11 @@ async function createInfracao(req, res) {
         !placaVeiculo ||
         !costCenter ||
         !dataInfracao ||
-        !tag ||
-        !hora ||
         !valor ||
-        !prefixo ||
         !marca ||
-        !categoria ||
-        !rodovia ||
-        !praca ||
-        !nome ||
         !dataEnvio ||
-        !codigoMulta ||
         !indicacaoLimite ||
-        !statusResposta ||
-        !reconhecimento ||
-        !enviadoParaRH
+        !statusResposta
     ) {
         return res.status(400).json({ error: "Campos obrigatórios faltando." });
     }
@@ -119,21 +109,11 @@ async function createInfractionFromCSV(infractionData) {
         !placaVeiculo ||
         !costCenter ||
         !dataInfracao ||
-        !tag ||
-        !hora ||
         !valor ||
-        !prefixo ||
         !marca ||
-        !categoria ||
-        !rodovia ||
-        !praca ||
-        !nome ||
         !dataEnvio ||
-        !codigoMulta ||
         !indicacaoLimite ||
-        !statusResposta ||
-        !reconhecimento ||
-        !enviadoParaRH
+        !statusResposta
     ) {
         console.log("Campos obrigatórios faltando.");
     }

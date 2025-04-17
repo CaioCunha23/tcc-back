@@ -84,7 +84,7 @@ export const Infracao = database.define('infracao', {
         allowNull: true
     },
     indicacaoLimite: {
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
         allowNull: true
     },
     statusResposta: {
