@@ -1,4 +1,6 @@
 import Infracao from '../models/Infracao.js';
+import Colaborador from '../models/Colaborador.js'
+import { sendInfractionNotification } from '../utils/mailer.js';
 import * as csv from 'csv';
 import fs from 'fs';
 import path from 'path';
@@ -72,10 +74,35 @@ async function createInfracao(req, res) {
     }
 
     try {
-        await infracao.save()
-        res.status(201).json(infracao.toJSON())
+        await infracao.save();
+
+        const colaborador = await Colaborador.findOne({ where: { uidMSK: colaboradorUid } });
+
+        if (!colaborador) {
+            console.warn(`Colaborador com UID ${colaboradorUid} não encontrado. E-mail não será enviado.`);
+        } else {
+            const recognitionLink = `${process.env.FRONTEND_URL}/infractions/${infracao.id}/recognition`;
+
+            try {
+                await sendInfractionNotification({
+                    to: colaborador.email,
+                    colaboradorNome: colaborador.nome,
+                    infractionId: infracao.id,
+                    infractionDate: new Date(dataInfracao),
+                    infractionType: tipo,
+                    recognitionLink,
+                });
+                console.log(`E-mail enviado para ${colaborador.email} sobre infração #${infracao.id}`);
+            } catch (mailError) {
+                console.error('Erro ao enviar e-mail de infração:', mailError);
+            }
+        }
+
+        return res.status(201).json(infracao.toJSON());
+
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao criar infração: ' + error.message })
+        console.error('Erro ao criar infração:', error);
+        return res.status(500).json({ error: 'Erro ao criar infração: ' + error.message });
     }
 }
 
