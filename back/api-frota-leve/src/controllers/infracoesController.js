@@ -1,9 +1,19 @@
 import Infracao from '../models/Infracao.js';
-import Colaborador from '../models/Colaborador.js'
-import { sendInfractionNotification } from '../utils/mailer.js';
+import Colaborador from '../models/Colaborador.js';
+import nodemailer from 'nodemailer';
 import * as csv from 'csv';
 import fs from 'fs';
 import path from 'path';
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    auth: {
+        user: 'caiocunhaiss@gmail.com',
+        pass: 'jiam bxjt qpuq rekf'
+    }
+});
 
 async function createInfracao(req, res) {
     const {
@@ -76,30 +86,41 @@ async function createInfracao(req, res) {
     try {
         await infracao.save();
 
-        const colaborador = await Colaborador.findOne({ where: { uidMSK: colaboradorUid } });
+        const colaborador = await Colaborador.findOne({
+            where: { uidMSK: colaboradorUid }
+        });
 
-        if (!colaborador) {
-            console.warn(`Colaborador com UID ${colaboradorUid} não encontrado. E-mail não será enviado.`);
+        if (!colaborador || !colaborador.email) {
+            console.warn(`Colaborador ${colaboradorUid} não encontrado ou sem e-mail.`);
         } else {
-            const recognitionLink = `${process.env.FRONTEND_URL}/infractions/${infracao.id}/recognition`;
+            const mailOptions = {
+                from: `"Equipe de Tráfego" <${process.env.SMTP_USER}>`,
+                to: colaborador.email,
+                subject: `Notificação de Infração - ${codigoMulta || placaVeiculo}`,
+                text: `Olá ${colaborador.nome},
+    
+    Foi registrada uma infração do tipo "${tipo}" em ${dataInfracao}.
+    
+    - Placa: ${placaVeiculo}
+    - Valor: R$ ${valor}
+    - Rodovia: ${rodovia || 'N/A'}
+    
+    Acesse o sistema para mais detalhes.
+    
+    Atenciosamente,
+    Equipe de Infrações`
+            };
 
-            try {
-                await sendInfractionNotification({
-                    to: colaborador.email,
-                    colaboradorNome: colaborador.nome,
-                    infractionId: infracao.id,
-                    infractionDate: new Date(dataInfracao),
-                    infractionType: tipo,
-                    recognitionLink,
-                });
-                console.log(`E-mail enviado para ${colaborador.email} sobre infração #${infracao.id}`);
-            } catch (mailError) {
-                console.error('Erro ao enviar e-mail de infração:', mailError);
-            }
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    console.error('Erro ao enviar e-mail:', err);
+                } else {
+                    console.log('E-mail enviado:', info.messageId);
+                }
+            });
         }
 
-        return res.status(201).json(infracao.toJSON());
-
+        return res.status(201).json({ message: 'Infração criada e e-mail enviado.' });
     } catch (error) {
         console.error('Erro ao criar infração:', error);
         return res.status(500).json({ error: 'Erro ao criar infração: ' + error.message });
