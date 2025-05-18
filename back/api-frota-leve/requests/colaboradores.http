@@ -20,7 +20,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/colaboradores
+GET http://localhost:3000/api/colaboradores
 
 ###
 
@@ -33,11 +33,11 @@ GET http://localhost:3000/colaborador/XYZ789
 
 ###
 
-PUT http://localhost:3000/colaborador/1
+PUT http://localhost:3000/api/colaborador/1
 Content-Type: application/json
 
 {
-  "status": false
+  "nome": "João da Silva"
 }
 
 
