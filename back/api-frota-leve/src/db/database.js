@@ -2,7 +2,13 @@ import { Sequelize } from 'sequelize';
 
 import config from './config.js';
 
-const sequelize = new Sequelize(config[process.env.NODE_ENV]);
+let sequelize;
+
+if (process.env.NODE_ENV == 'production') {
+    sequelize = new Sequelize(config.production)
+} else {
+    sequelize = new Sequelize(config.development)
+}
 
 try {
     await sequelize.authenticate();
