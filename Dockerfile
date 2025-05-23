@@ -4,4 +4,6 @@ COPY . .
 
 RUN npm i
 
+RUN chmod -R 755 node_modules
+
 CMD ["npm", "run", "start:prod"]

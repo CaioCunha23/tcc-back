@@ -6,8 +6,8 @@ import path from 'path';
 
 dotenv.config()
 
-import './src/models/association.js';
-import router from './src/routes/router.js';
+import './models/association.js';
+import router from './routes/router.js';
 
 const app = express();
 
