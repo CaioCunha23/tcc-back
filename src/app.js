@@ -17,12 +17,7 @@ if (!fs.existsSync(uploadDir)) {
   console.log(`Pasta "uploads" criada em ${uploadDir}`);
 }
 
-app.use(cors({
-  origin: "*",
-  methods: ["*"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}))
+app.use(cors())
 
 app.use(express.json());
 app.use(router);
