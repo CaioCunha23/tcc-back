@@ -2,6 +2,8 @@ import Veiculo from '../models/Veiculo.js';
 import * as csv from 'csv';
 import fs from 'fs';
 import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function createVehicle(req, res) {
     const {

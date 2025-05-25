@@ -252,40 +252,27 @@ export async function getTopOffenders(req, res) {
     }
 }
 
-export async function getVeiculosProximosManutencao(req, res) {
-    try {
-        const now = new Date();
-        // Define sempre o período de 30 dias à frente
-        const thresholdDays = 30;
-        const upperLimit = new Date();
-        upperLimit.setDate(now.getDate() + thresholdDays);
+export async function getVeiculosContratoProximo(req, res) {
+  try {
+    const hoje = new Date()
+    const tresMeses = new Date()
+    tresMeses.setMonth(hoje.getMonth() + 3)
 
-        // Busca os veículos cuja próxima revisão esteja entre hoje e os próximos 30 dias
-        const vehicles = await Veiculo.findAll({
-            where: {
-                proximaRevisao: {
-                    [Op.between]: [now, upperLimit]
-                }
-            },
-            order: [['proximaRevisao', 'ASC']]
-        });
+    const veiculos = await Veiculo.findAll({
+      where: {
+        previsaoDevolucao: {
+          [Op.between]: [hoje, tresMeses],
+        },
+      },
+      attributes: ['placa', 'previsaoDevolucao'],
+      order: [['previsaoDevolucao', 'ASC']],
+    })
 
-        // Calcula quantos dias faltam para a manutenção e insere essa informação no retorno
-        const vehiclesWithDays = vehicles.map(vehicle => {
-            const proximaRevisao = new Date(vehicle.proximaRevisao);
-            const diffTime = proximaRevisao.getTime() - now.getTime();
-            const daysUntilMaintenance = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return {
-                ...vehicle.dataValues,
-                daysUntilMaintenance
-            };
-        });
-
-        return res.json(vehiclesWithDays);
-    } catch (error) {
-        console.error("Erro ao buscar veículos próximos da manutenção:", error);
-        return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    return res.json(veiculos)
+  } catch (err) {
+    console.error('Erro ao buscar veículos com contrato próximo:', err)
+    return res.status(500).json({ error: 'Erro interno' })
+  }
 }
 
 export async function getMultasProximasVencer(req, res) {
@@ -330,6 +317,6 @@ export default {
     getInfracoesChartData,
     getColaboradorMaiorAumento,
     getTopOffenders,
-    getVeiculosProximosManutencao,
+    getVeiculosContratoProximo,
     getMultasProximasVencer
 };

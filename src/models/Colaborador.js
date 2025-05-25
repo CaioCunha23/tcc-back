@@ -67,6 +67,14 @@ export const Colaborador = database.define('colaborador', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    resetToken: {
+        type: Sequelize.STRING,
+        allowNull: true,
+    },
+    resetExpires: {
+        type: Sequelize.DATE,
+        allowNull: true,
+    },
 },
     {
         tableName: "colaboradores",

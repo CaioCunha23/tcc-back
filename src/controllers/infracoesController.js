@@ -1,19 +1,9 @@
 import Infracao from '../models/Infracao.js';
 import Colaborador from '../models/Colaborador.js';
-import nodemailer from 'nodemailer';
 import * as csv from 'csv';
 import fs from 'fs';
 import path from 'path';
-
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    auth: {
-        user: 'caiocunhaiss@gmail.com',
-        pass: 'jiam bxjt qpuq rekf'
-    }
-});
+import { sendEmail } from '../services/mailer.js'
 
 async function createInfracao(req, res) {
     const {
@@ -90,40 +80,40 @@ async function createInfracao(req, res) {
             where: { uidMSK: colaboradorUid }
         });
 
-        if (!colaborador || !colaborador.email) {
-            console.warn(`Colaborador ${colaboradorUid} não encontrado ou sem e-mail.`);
-        } else {
-            const mailOptions = {
-                from: `"Equipe de Tráfego" <${process.env.SMTP_USER}>`,
+        if (colaborador?.email) {
+            await sendEmail({
                 to: colaborador.email,
-                subject: `Notificação de Infração - ${codigoMulta || placaVeiculo}`,
+                subject: `Notificação de Infração – ${codigoMulta || placaVeiculo}`,
                 text: `Olá ${colaborador.nome},
-    
-    Foi registrada uma infração do tipo "${tipo}" em ${dataInfracao}.
-    
-    - Placa: ${placaVeiculo}
-    - Valor: R$ ${valor}
-    - Rodovia: ${rodovia || 'N/A'}
-    
-    Acesse o sistema para mais detalhes.
-    
-    Atenciosamente,
-    Equipe de Infrações`
-            };
 
-            transporter.sendMail(mailOptions, (err, info) => {
-                if (err) {
-                    console.error('Erro ao enviar e-mail:', err);
-                } else {
-                    console.log('E-mail enviado:', info.messageId);
-                }
-            });
+Foi registrada uma infração do tipo "${tipo}" em ${dataInfracao}.
+
+- Placa: ${placaVeiculo}
+- Valor: R$ ${valor}
+- Rodovia: ${rodovia || 'N/A'}
+
+Acesse o sistema para mais detalhes.
+
+Atenciosamente,
+Equipe de Infrações`,
+                html: `<p>Olá <strong>${colaborador.nome}</strong>,</p>
+               <p>Foi registrada uma infração do tipo "<em>${tipo}</em>" em ${dataInfracao}.</p>
+               <ul>
+                 <li>Placa: ${placaVeiculo}</li>
+                 <li>Valor: R$ ${valor}</li>
+                 <li>Rodovia: ${rodovia || 'N/A'}</li>
+               </ul>
+               <p>Acesse o sistema para mais detalhes.</p>
+               <p>Atenciosamente,<br/>Equipe de Infrações</p>`
+            })
+        } else {
+            console.warn(`Colaborador ${colaboradorUid} não encontrado ou sem e-mail.`)
         }
 
-        return res.status(201).json({ message: 'Infração criada e e-mail enviado.' });
+        return res.status(201).json({ message: 'Infração criada e e-mail enviado.' })
     } catch (error) {
-        console.error('Erro ao criar infração:', error);
-        return res.status(500).json({ error: 'Erro ao criar infração: ' + error.message });
+        console.error('Erro ao criar infração:', error)
+        return res.status(500).json({ error: 'Erro ao criar infração: ' + error.message })
     }
 }
 

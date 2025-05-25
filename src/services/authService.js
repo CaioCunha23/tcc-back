@@ -1,6 +1,11 @@
 import jwt from 'jsonwebtoken';
 import Colaborador from '../models/Colaborador.js';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
+import { sendEmail } from './mailer.js';
+import { Op } from 'sequelize';
+import dotenv from 'dotenv';
+dotenv.config();
 
 async function login(req, res) {
     const { login, password } = req.body
@@ -117,7 +122,15 @@ export async function forgotPassword(req, res) {
         await sendEmail({
             to: user.email,
             subject: 'Redefinição de senha',
-            html: `<p>Clique <a href="${FRONT_URL}/reset-password/${token}">aqui</a> para redefinir sua senha.</p>`,
+            text: `Olá ${user.nome},\n\n` +
+                `Para redefinir sua senha, acesse:\n` +
+                `${process.env.FRONTEND_URL}/reset-password/${token}\n\n` +
+                `Este link expira em 30 minutos.\n` +
+                `Se você não solicitou, pode ignorar.`,
+            html: `<p>Olá <strong>${user.nome}</strong>,</p>
+             <p>Para redefinir sua senha, <a href="${process.env.FRONTEND_URL}/reset-password/${token}">clique aqui</a>.</p>
+             <p>Este link expira em 30 minutos.</p>
+             <p>Se você não solicitou, pode ignorar.</p>`,
         })
     }
 

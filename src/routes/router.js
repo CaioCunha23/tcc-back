@@ -15,6 +15,9 @@ router.post('/login', authService.login);
 router.post('/eu', authService.pegarUsuarioDoToken);
 router.post('/first-access', authService.checkEmail);
 router.put('/colaborador/:uidMSK/password', authService.setPassword);
+router.post('/forgot-password', authService.forgotPassword);
+router.put('/reset-password/:token', authService.resetPassword);
+
 
 router.post('/colaborador', colaboradoresController.createWorker);
 router.post('/colaboradores/import', upload.single('file'), colaboradoresController.importWorkerCSV);
@@ -54,7 +57,7 @@ router.get('/dashboard-metrics', dashboardMetricsController.getDashboardMetrics)
 router.get('/infracoes-chart-data', dashboardMetricsController.getInfracoesChartData);
 router.get('/dashboard-metrics-colaborador-maior-aumento', dashboardMetricsController.getColaboradorMaiorAumento);
 router.get('/top-offenders', dashboardMetricsController.getTopOffenders);
-router.get('/veiculos-manutencao', dashboardMetricsController.getVeiculosProximosManutencao);
+router.get('/veiculos-devolucao', dashboardMetricsController.getVeiculosContratoProximo);
 router.get('/vencimento-multas', dashboardMetricsController.getMultasProximasVencer);
 
 export default router;

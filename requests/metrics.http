@@ -10,7 +10,7 @@ GET http://localhost:3000/top-offenders
 
 ###
 
-GET http://localhost:3000/veiculos-manutencao
+GET http://localhost:3000/veiculos-devolucao
 
 ###
 
