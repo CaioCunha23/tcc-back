@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize'
+import { DataTypes, Sequelize } from 'sequelize'
 import database from '../db/database.js'
 
 export const Veiculo = database.define('veiculo', {
@@ -103,6 +103,10 @@ export const Veiculo = database.define('veiculo', {
     proximaRevisao: {
         type: Sequelize.DATE,
         allowNull: false
+    },
+    qrCode: {
+        type: DataTypes.TEXT('medium'),
+        allowNull: true,
     }
 })
 

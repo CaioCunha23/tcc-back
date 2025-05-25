@@ -13,6 +13,8 @@ import dashboardMetricsController from '../controllers/metricsController.js';
 
 router.post('/login', authService.login);
 router.post('/eu', authService.pegarUsuarioDoToken);
+router.post('/first-access', authService.checkEmail);
+router.put('/colaborador/:uidMSK/password', authService.setPassword);
 
 router.post('/colaborador', colaboradoresController.createWorker);
 router.post('/colaboradores/import', upload.single('file'), colaboradoresController.importWorkerCSV);
@@ -28,13 +30,16 @@ router.get('/veiculos', veiculosController.getVehicles);
 router.get('/veiculo/:id', veiculosController.getVehicleByID);
 router.get('/veiculo/:uidMSK', veiculosController.getVehicleByMskID);
 router.get('/veiculo/:placa', veiculosController.getVehicleByPlate);
+router.get('/veiculo/:placa/qrcode.svg', veiculosController.getQRCode);
 router.put('/veiculo/:id', veiculosController.updateVehicle);
 router.delete('/veiculo/:id', veiculosController.deleteVehicle);
 
 router.post('/historico', historicoUtilizacaoVeiculosController.createHistorico);
+router.post('/veiculo/:placa/uso', historicoUtilizacaoVeiculosController.startUsoViaQr);
 router.get('/historicos', historicoUtilizacaoVeiculosController.getHistoricos);
 router.get('/historico/:id', historicoUtilizacaoVeiculosController.getHistoricoById);
 router.put('/historico/:id', historicoUtilizacaoVeiculosController.updateHistorico);
+router.put('/veiculo/:placa/uso', historicoUtilizacaoVeiculosController.endUsoViaQr);
 router.delete('/historico/:id', historicoUtilizacaoVeiculosController.deleteHistorico);
 
 router.post('/infracao', infracoesController.createInfracao);

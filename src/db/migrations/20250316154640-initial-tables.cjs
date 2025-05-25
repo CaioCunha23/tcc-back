@@ -32,7 +32,7 @@ module.exports = {
       },
       password: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       type: {
         type: Sequelize.STRING,
@@ -179,6 +179,10 @@ module.exports = {
       proximaRevisao: {
         type: Sequelize.DATE,
         allowNull: false
+      },
+      qrCode: {
+        type: Sequelize.TEXT('medium'),
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,

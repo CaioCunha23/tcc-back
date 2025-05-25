@@ -31,6 +31,10 @@ GET http://localhost:3000/veiculos
 
 ###
 
+GET http://localhost:3000/veiculo/ABC1234/qrcode.svg
+
+###
+
 GET http://localhost:3000/veiculo/1
 
 ###
