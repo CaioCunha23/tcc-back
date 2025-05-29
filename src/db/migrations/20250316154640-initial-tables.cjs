@@ -188,10 +188,6 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false
       },
-      qrCode: {
-        type: Sequelize.TEXT('medium'),
-        allowNull: true,
-      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

@@ -6,7 +6,7 @@ const QRCode = require('qrcode');
 module.exports = {
   async up(queryInterface, Sequelize) {
 
-    const veiculos = [
+    await queryInterface.bulkInsert('veiculos', [
       {
         fornecedor: "Fornecedor A",
         contrato: "Contrato A1",
@@ -357,16 +357,7 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       }
-    ];
-
-    for (const v of veiculos) {
-      const urlUso = `${process.env.FRONTEND_URL}/uso/${v.placa}`;
-      v.qrCode = await QRCode.toString(urlUso, { type: 'svg' });
-      v.createdAt = new Date();
-      v.updatedAt = new Date();
-    }
-
-    await queryInterface.bulkInsert('veiculos', veiculos);
+    ]);
   },
 
   async down(queryInterface, Sequelize) {

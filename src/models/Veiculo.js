@@ -104,10 +104,6 @@ export const Veiculo = database.define('veiculo', {
         type: Sequelize.DATE,
         allowNull: false
     },
-    qrCode: {
-        type: DataTypes.TEXT('medium'),
-        allowNull: true,
-    }
 })
 
 export default Veiculo
