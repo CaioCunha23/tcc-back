@@ -33,7 +33,6 @@ router.get('/veiculos', veiculosController.getVehicles);
 router.get('/veiculo/:id', veiculosController.getVehicleByID);
 router.get('/veiculo/:uidMSK', veiculosController.getVehicleByMskID);
 router.get('/veiculo/:placa', veiculosController.getVehicleByPlate);
-router.get('/veiculo/:placa/qrcode.svg', veiculosController.getQRCode);
 router.put('/veiculo/:id', veiculosController.updateVehicle);
 router.delete('/veiculo/:id', veiculosController.deleteVehicle);
 

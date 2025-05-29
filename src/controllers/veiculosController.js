@@ -30,9 +30,6 @@ async function createVehicle(req, res) {
         proximaRevisao
     } = req.body
 
-    const urlUso = `${process.env.FRONTEND_URL}/uso/${placa}`;
-    const qrSvg = await QRCode.toString(urlUso, { type: 'svg' });
-
     const vehicle = Veiculo.build({
         fornecedor,
         contrato,
@@ -54,8 +51,7 @@ async function createVehicle(req, res) {
         mensalidade,
         budget,
         multa,
-        proximaRevisao,
-        qrCode: qrSvg
+        proximaRevisao
     })
 
     try {
@@ -69,20 +65,6 @@ async function createVehicle(req, res) {
         res.status(201).json(vehicle.toJSON())
     } catch (error) {
         res.status(500).json({ error: 'Erro ao criar veículo: ' + error.message })
-    }
-}
-
-async function getQRCode(req, res) {
-    const { placa } = req.params;
-    try {
-        const vehicle = await Veiculo.findOne({ where: { placa } });
-        if (!vehicle || !vehicle.qrCode) {
-            return res.status(404).json({ error: 'QR code não encontrado' });
-        }
-        res.setHeader('Content-Type', 'image/svg+xml');
-        res.send(vehicle.qrCode);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
     }
 }
 
@@ -365,7 +347,6 @@ async function deleteVehicle(req, res) {
 
 export default {
     createVehicle,
-    getQRCode,
     createVehicleFromCSV,
     importVehicleCSV,
     getVehicles,

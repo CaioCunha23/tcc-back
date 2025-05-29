@@ -1,7 +1,5 @@
 'use strict';
 
-const QRCode = require('qrcode');
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
