@@ -31,8 +31,6 @@ GET https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/veiculos
 
 ###
 
-###
-
 GET http://localhost:3000/veiculo/1
 
 ###

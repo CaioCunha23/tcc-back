@@ -37,12 +37,12 @@ router.put('/veiculo/:id', veiculosController.updateVehicle);
 router.delete('/veiculo/:id', veiculosController.deleteVehicle);
 
 router.post('/historico', historicoUtilizacaoVeiculosController.createHistorico);
-router.post('/veiculo/:placa/uso', historicoUtilizacaoVeiculosController.startUsoViaQr);
 router.get('/historicos', historicoUtilizacaoVeiculosController.getHistoricos);
 router.get('/historico/:id', historicoUtilizacaoVeiculosController.getHistoricoById);
 router.put('/historico/:id', historicoUtilizacaoVeiculosController.updateHistorico);
-router.put('/veiculo/:placa/uso', historicoUtilizacaoVeiculosController.endUsoViaQr);
 router.delete('/historico/:id', historicoUtilizacaoVeiculosController.deleteHistorico);
+router.post("/historico-utilizacao/iniciar", historicoUtilizacaoVeiculosController.startUse);
+router.post("/historico-utilizacao/finalizar", historicoUtilizacaoVeiculosController.finishUse);
 
 router.post('/infracao', infracoesController.createInfracao);
 router.post('/infracoes/import', upload.single('file'), infracoesController.importInfractionCSV);
