@@ -30,3 +30,16 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:3000/historico/1
+
+###
+
+POST https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/historico-utilizacao/iniciar
+
+{
+  "placa": "ABC1234",
+  "modelo": "Modelo Teste",
+  "renavam": "123456789",
+  "chassi": "1234567890",
+  "status": "disponivel",
+  "uidMSK": "JSI123"
+}

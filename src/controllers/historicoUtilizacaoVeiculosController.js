@@ -1,3 +1,4 @@
+import { Op } from 'sequelize' // ADICIONADO: Import do Op
 import HistoricoUtilizacaoVeiculo from '../models/HistoricoUtilizacaoVeiculo.js'
 import Colaborador from '../models/Colaborador.js'
 import Veiculo from '../models/Veiculo.js'
@@ -140,6 +141,8 @@ async function deleteHistorico(req, res) {
 
 async function startUse(req, res) {
     try {
+        console.log('StartUse chamado com:', req.body);
+
         const { placa, modelo, renavam, chassi, status, uidMSK: uidNoBody } = req.body;
 
         if (!placa || !modelo || !renavam || !chassi || !status) {
@@ -185,9 +188,16 @@ async function startUse(req, res) {
         });
 
         if (activeRegistro) {
-            return res.status(409).json({
-                error: "Este veículo já está em uso por outro colaborador.",
-            });
+            if (activeRegistro.colaboradorUid === colaboradorUid) {
+                return res.status(409).json({
+                    error: "Você já está usando este veículo. Escaneie novamente para finalizar.",
+                    action: "finish"
+                });
+            } else {
+                return res.status(409).json({
+                    error: "Este veículo já está em uso por outro colaborador.",
+                });
+            }
         }
 
         const novoHistorico = await HistoricoUtilizacaoVeiculo.create({
@@ -212,6 +222,8 @@ async function startUse(req, res) {
 
 async function finishUse(req, res) {
     try {
+        console.log('FinishUse chamado com:', req.body);
+
         const { placa, uidMSK: uidNoBody } = req.body;
 
         if (!placa) {
