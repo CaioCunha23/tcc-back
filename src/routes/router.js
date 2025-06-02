@@ -41,8 +41,8 @@ router.get('/historicos', historicoUtilizacaoVeiculosController.getHistoricos);
 router.get('/historico/:id', historicoUtilizacaoVeiculosController.getHistoricoById);
 router.put('/historico/:id', historicoUtilizacaoVeiculosController.updateHistorico);
 router.delete('/historico/:id', historicoUtilizacaoVeiculosController.deleteHistorico);
-router.post("/historico-utilizacao/iniciar", historicoUtilizacaoVeiculosController.startUse);
-router.post("/historico-utilizacao/finalizar", historicoUtilizacaoVeiculosController.finishUse);
+router.post("/historico-utilizacao/iniciar", authService.checaToken, historicoUtilizacaoVeiculosController.startUse);
+router.post("/historico-utilizacao/finalizar", authService.checaToken, historicoUtilizacaoVeiculosController.finishUse);
 
 router.post('/infracao', infracoesController.createInfracao);
 router.post('/infracoes/import', upload.single('file'), infracoesController.importInfractionCSV);
