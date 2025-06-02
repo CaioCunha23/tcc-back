@@ -34,16 +34,24 @@ function checaToken(req, res, next) {
     const authHeader = headers.authorization;
 
     if (!authHeader) {
-        return res.status(403).json({ message: 'Forbidden' });
+        return next();
     }
 
     const [, token] = authHeader.split(' ')
 
     if (!token) {
-        return res.status(403).json({ message: 'Forbidden' })
+        return next();
     }
 
-    next()
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        req.user = decoded;
+        console.log('Token decodificado com sucesso:', decoded);
+        next();
+    } catch (error) {
+        console.log('Erro ao verificar token:', error);
+        next();
+    }
 }
 
 function pegarUsuarioDoToken(req, res) {
