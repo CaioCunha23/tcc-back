@@ -143,7 +143,7 @@ async function startUse(req, res) {
     try {
         console.log('StartUse chamado com:', req.body);
 
-        const { placa, modelo, renavam, chassi, status, uidMSK: uidNoBody } = req.body;
+        const { placa, modelo, renavam, chassi, status, colaboradorUid: uidNoBody } = req.body;
 
         if (!placa || !modelo || !renavam || !chassi || !status) {
             return res.status(400).json({

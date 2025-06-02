@@ -34,6 +34,7 @@ DELETE http://localhost:3000/historico/1
 ###
 
 POST https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/historico-utilizacao/iniciar
+Content-Type: application/json
 
 {
   "placa": "ABC1234",
