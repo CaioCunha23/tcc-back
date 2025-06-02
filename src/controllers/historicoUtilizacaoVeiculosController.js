@@ -139,6 +139,7 @@ async function deleteHistorico(req, res) {
     }
 }
 
+// Correção principal na função startUse
 async function startUse(req, res) {
     try {
         console.log('=== DEBUG BACKEND START USE ===');
@@ -168,9 +169,10 @@ async function startUse(req, res) {
         let colaboradorUid;
 
         console.log('=== VERIFICAÇÃO DE AUTENTICAÇÃO ===');
-        if (req.user && req.user.uidMSK) {
-            console.log('✅ Usuário autenticado via token, uidMSK:', req.user.uidMSK);
-            colaboradorUid = req.user.uidMSK;
+        // ✅ CORREÇÃO: Verificar req.user.colaboradorUid em vez de req.user.uidNoBody
+        if (req.user && req.user.colaboradorUid) {
+            console.log('✅ Usuário autenticado via token, colaboradorUid:', req.user.colaboradorUid);
+            colaboradorUid = req.user.colaboradorUid;
         } else {
             console.log('❌ Usuário não autenticado via token');
             if (!uidNoBody) {
@@ -185,17 +187,18 @@ async function startUse(req, res) {
         console.log('colaboradorUid final:', colaboradorUid);
         console.log('===================================');
 
+        // Resto do código permanece igual...
         const colaborador = await Colaborador.findOne({
-            where: { uidMSK: colaboradorUid },
+            where: { colaboradorUid },
         });
-        
+
         console.log('=== BUSCA DO COLABORADOR ===');
         console.log('Colaborador encontrado:', !!colaborador);
         if (colaborador) {
-            console.log('Dados do colaborador:', { id: colaborador.id, uidMSK: colaborador.uidMSK });
+            console.log('Dados do colaborador:', { id: colaborador.id, colaboradorUid: colaborador.colaboradorUid });
         }
         console.log('============================');
-        
+
         if (!colaborador) {
             console.log('❌ Colaborador não existe');
             return res
@@ -210,7 +213,7 @@ async function startUse(req, res) {
             console.log('Dados do veículo:', { id: veiculo.id, placa: veiculo.placa });
         }
         console.log('========================');
-        
+
         if (!veiculo) {
             console.log('❌ Veículo não existe');
             return res
@@ -218,10 +221,10 @@ async function startUse(req, res) {
                 .json({ error: `Veículo de placa '${placa}' não foi encontrado.` });
         }
 
-        // ✅ CORREÇÃO: Usar veiculoPlaca em vez de veiculoId
+        // Verificar se já existe uso ativo
         const activeRegistro = await HistoricoUtilizacaoVeiculo.findOne({
             where: {
-                veiculoPlaca: placa, // ✅ Mudança aqui
+                veiculoPlaca: placa,
                 dataFim: { [Op.is]: null },
             },
         });
@@ -232,7 +235,7 @@ async function startUse(req, res) {
             console.log('Dados do registro ativo:', {
                 id: activeRegistro.id,
                 colaboradorUid: activeRegistro.colaboradorUid,
-                veiculoPlaca: activeRegistro.veiculoPlaca // ✅ Mudança aqui
+                veiculoPlaca: activeRegistro.veiculoPlaca
             });
             console.log('Colaborador atual:', colaboradorUid);
             console.log('São o mesmo colaborador?', activeRegistro.colaboradorUid === colaboradorUid);
@@ -255,19 +258,18 @@ async function startUse(req, res) {
         }
 
         console.log('=== CRIANDO NOVO HISTÓRICO ===');
-        // ✅ CORREÇÃO: Usar veiculoPlaca em vez de veiculoId
         const novoHistorico = await HistoricoUtilizacaoVeiculo.create({
             colaboradorUid,
-            veiculoPlaca: placa, // ✅ Mudança aqui
+            veiculoPlaca: placa,
             dataInicio: new Date(),
             dataFim: null,
             tipoUso: "temporario",
         });
-        
+
         console.log('✅ Histórico criado:', {
             id: novoHistorico.id,
             colaboradorUid: novoHistorico.colaboradorUid,
-            veiculoPlaca: novoHistorico.veiculoPlaca // ✅ Mudança aqui
+            veiculoPlaca: novoHistorico.veiculoPlaca
         });
         console.log('==============================');
 
@@ -287,7 +289,7 @@ async function finishUse(req, res) {
     try {
         console.log('FinishUse chamado com:', req.body);
 
-        const { placa, uidMSK: uidNoBody } = req.body;
+        const { placa, colaboradorUid: uidNoBody } = req.body;
 
         if (!placa) {
             return res
@@ -297,8 +299,8 @@ async function finishUse(req, res) {
 
         let colaboradorUid;
 
-        if (req.user && req.user.uidMSK) {
-            colaboradorUid = req.user.uidMSK;
+        if (req.user && req.user.colaboradorUid) {
+            colaboradorUid = req.user.colaboradorUid;
         } else if (uidNoBody) {
             colaboradorUid = uidNoBody;
         } else {
@@ -308,7 +310,7 @@ async function finishUse(req, res) {
         }
 
         const colaborador = await Colaborador.findOne({
-            where: { uidMSK: colaboradorUid },
+            where: { colaboradorUid },
         });
         if (!colaborador) {
             return res
