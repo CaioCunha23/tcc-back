@@ -35,7 +35,6 @@ DELETE http://localhost:3000/historico/1
 
 POST https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/historico-utilizacao/iniciar
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWRNU0siOiJMUk8yMzQiLCJlbWFpbCI6Imxhcmlzc2Eucm9jaGFAZXhhbXBsZS5jb20iLCJpYXQiOjE3NDg4Mjc5MzV9.t5eU7C7GYwNrvI-I2UZNGoCvZquoMFMeQ1BfIkrFDfg
 
 {
   "placa": "HIJ4567",
