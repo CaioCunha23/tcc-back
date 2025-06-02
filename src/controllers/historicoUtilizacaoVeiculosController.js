@@ -218,9 +218,10 @@ async function startUse(req, res) {
                 .json({ error: `Veículo de placa '${placa}' não foi encontrado.` });
         }
 
+        // ✅ CORREÇÃO: Usar veiculoPlaca em vez de veiculoId
         const activeRegistro = await HistoricoUtilizacaoVeiculo.findOne({
             where: {
-                veiculoId: veiculo.id,
+                veiculoPlaca: placa, // ✅ Mudança aqui
                 dataFim: { [Op.is]: null },
             },
         });
@@ -231,7 +232,7 @@ async function startUse(req, res) {
             console.log('Dados do registro ativo:', {
                 id: activeRegistro.id,
                 colaboradorUid: activeRegistro.colaboradorUid,
-                veiculoId: activeRegistro.veiculoId
+                veiculoPlaca: activeRegistro.veiculoPlaca // ✅ Mudança aqui
             });
             console.log('Colaborador atual:', colaboradorUid);
             console.log('São o mesmo colaborador?', activeRegistro.colaboradorUid === colaboradorUid);
@@ -254,9 +255,10 @@ async function startUse(req, res) {
         }
 
         console.log('=== CRIANDO NOVO HISTÓRICO ===');
+        // ✅ CORREÇÃO: Usar veiculoPlaca em vez de veiculoId
         const novoHistorico = await HistoricoUtilizacaoVeiculo.create({
             colaboradorUid,
-            veiculoId: veiculo.id,
+            veiculoPlaca: placa, // ✅ Mudança aqui
             dataInicio: new Date(),
             dataFim: null,
             tipoUso: "temporario",
@@ -265,7 +267,7 @@ async function startUse(req, res) {
         console.log('✅ Histórico criado:', {
             id: novoHistorico.id,
             colaboradorUid: novoHistorico.colaboradorUid,
-            veiculoId: novoHistorico.veiculoId
+            veiculoPlaca: novoHistorico.veiculoPlaca // ✅ Mudança aqui
         });
         console.log('==============================');
 
@@ -323,7 +325,7 @@ async function finishUse(req, res) {
 
         const activeRegistro = await HistoricoUtilizacaoVeiculo.findOne({
             where: {
-                veiculoId: veiculo.id,
+                veiculoPlaca: veiculo.placa,
                 dataFim: { [Op.is]: null },
             },
         });
