@@ -139,25 +139,20 @@ async function deleteHistorico(req, res) {
     }
 }
 
-// Correção principal na função startUse
 async function startUse(req, res) {
     try {
-        console.log('=== DEBUG BACKEND START USE ===');
         console.log('StartUse chamado com req.body:', req.body);
         console.log('req.user:', req.user);
         console.log('req.headers.authorization:', req.headers.authorization);
-        console.log('===============================');
 
         const { placa, modelo, renavam, chassi, status, colaboradorUid: uidNoBody } = req.body;
 
-        console.log('=== VALORES EXTRAÍDOS ===');
         console.log('placa:', placa);
         console.log('modelo:', modelo);
         console.log('renavam:', renavam);
         console.log('chassi:', chassi);
         console.log('status:', status);
         console.log('colaboradorUid (uidNoBody):', uidNoBody);
-        console.log('=========================');
 
         if (!placa || !modelo || !renavam || !chassi || !status) {
             console.log('❌ Dados do veículo incompletos');
@@ -168,15 +163,13 @@ async function startUse(req, res) {
 
         let colaboradorUid;
 
-        console.log('=== VERIFICAÇÃO DE AUTENTICAÇÃO ===');
-        // ✅ CORREÇÃO: Verificar req.user.colaboradorUid em vez de req.user.uidNoBody
-        if (req.user && req.user.colaboradorUid) {
-            console.log('✅ Usuário autenticado via token, colaboradorUid:', req.user.colaboradorUid);
-            colaboradorUid = req.user.colaboradorUid;
+        if (req.user && req.user.uidMSK) {
+            console.log('✅ Usuário autenticado via token, uidMSK:', req.user.uidMSK);
+            colaboradorUid = req.user.uidMSK;
         } else {
-            console.log('❌ Usuário não autenticado via token');
+            console.log('Usuário não autenticado via token');
             if (!uidNoBody) {
-                console.log('❌ uidNoBody também não existe, retornando erro 400');
+                console.log('uidNoBody também não existe, retornando erro 400');
                 return res
                     .status(400)
                     .json({ error: "Usuário não autenticado. Envie colaboradorUid no body." });
@@ -185,22 +178,18 @@ async function startUse(req, res) {
             colaboradorUid = uidNoBody;
         }
         console.log('colaboradorUid final:', colaboradorUid);
-        console.log('===================================');
 
-        // Resto do código permanece igual...
         const colaborador = await Colaborador.findOne({
-            where: { colaboradorUid },
+            where: { uidMSK: colaboradorUid },
         });
 
-        console.log('=== BUSCA DO COLABORADOR ===');
         console.log('Colaborador encontrado:', !!colaborador);
         if (colaborador) {
-            console.log('Dados do colaborador:', { id: colaborador.id, colaboradorUid: colaborador.colaboradorUid });
+            console.log('Dados do colaborador:', { id: colaborador.id, uidMSK: colaborador.uidMSK });
         }
-        console.log('============================');
 
         if (!colaborador) {
-            console.log('❌ Colaborador não existe');
+            console.log('Colaborador não existe');
             return res
                 .status(404)
                 .json({ error: `Colaborador com UID '${colaboradorUid}' não existe.` });
@@ -212,16 +201,14 @@ async function startUse(req, res) {
         if (veiculo) {
             console.log('Dados do veículo:', { id: veiculo.id, placa: veiculo.placa });
         }
-        console.log('========================');
 
         if (!veiculo) {
-            console.log('❌ Veículo não existe');
+            console.log('Veículo não existe');
             return res
                 .status(404)
                 .json({ error: `Veículo de placa '${placa}' não foi encontrado.` });
         }
 
-        // Verificar se já existe uso ativo
         const activeRegistro = await HistoricoUtilizacaoVeiculo.findOne({
             where: {
                 veiculoPlaca: placa,
@@ -229,7 +216,6 @@ async function startUse(req, res) {
             },
         });
 
-        console.log('=== VERIFICAÇÃO DE USO ATIVO ===');
         console.log('Registro ativo encontrado:', !!activeRegistro);
         if (activeRegistro) {
             console.log('Dados do registro ativo:', {
@@ -240,24 +226,22 @@ async function startUse(req, res) {
             console.log('Colaborador atual:', colaboradorUid);
             console.log('São o mesmo colaborador?', activeRegistro.colaboradorUid === colaboradorUid);
         }
-        console.log('================================');
 
         if (activeRegistro) {
             if (activeRegistro.colaboradorUid === colaboradorUid) {
-                console.log('✅ Mesmo colaborador, retornando action finish');
+                console.log('Mesmo colaborador, retornando action finish');
                 return res.status(409).json({
                     error: "Você já está usando este veículo. Escaneie novamente para finalizar.",
                     action: "finish"
                 });
             } else {
-                console.log('❌ Colaborador diferente já está usando');
+                console.log('Colaborador diferente já está usando');
                 return res.status(409).json({
                     error: "Este veículo já está em uso por outro colaborador.",
                 });
             }
         }
 
-        console.log('=== CRIANDO NOVO HISTÓRICO ===');
         const novoHistorico = await HistoricoUtilizacaoVeiculo.create({
             colaboradorUid,
             veiculoPlaca: placa,
@@ -271,14 +255,13 @@ async function startUse(req, res) {
             colaboradorUid: novoHistorico.colaboradorUid,
             veiculoPlaca: novoHistorico.veiculoPlaca
         });
-        console.log('==============================');
 
         return res.status(201).json({
             message: "Início de utilização registrado com sucesso.",
             historico: novoHistorico,
         });
     } catch (error) {
-        console.error("❌ Erro em startUse:", error);
+        console.error("Erro em startUse:", error);
         return res
             .status(500)
             .json({ error: "Erro interno ao iniciar utilização: " + error.message });
@@ -299,19 +282,20 @@ async function finishUse(req, res) {
 
         let colaboradorUid;
 
-        if (req.user && req.user.colaboradorUid) {
-            colaboradorUid = req.user.colaboradorUid;
+        if (req.user && req.user.uidMSK) {
+            colaboradorUid = req.user.uidMSK;
         } else if (uidNoBody) {
             colaboradorUid = uidNoBody;
         } else {
             return res
                 .status(400)
-                .json({ error: "Usuário não autenticado. Envie uidMSK no body." });
+                .json({ error: "Usuário não autenticado. Envie colaboradorUid no body." });
         }
 
         const colaborador = await Colaborador.findOne({
-            where: { colaboradorUid },
+            where: { uidMSK: colaboradorUid },
         });
+
         if (!colaborador) {
             return res
                 .status(404)
