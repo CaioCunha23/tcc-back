@@ -230,6 +230,10 @@ async function startUse(req, res) {
             tipoUso: "temporario",
         });
 
+        await veiculo.update({
+            status: "Em Uso"
+        });
+
         return res.status(201).json({
             message: "Início de utilização registrado com sucesso.",
             historico: novoHistorico,
@@ -302,6 +306,12 @@ async function finishUse(req, res) {
 
         activeRegistro.dataFim = new Date();
         await activeRegistro.save();
+
+        if (veiculo) {
+            await veiculo.update({
+                status: "Disponível"
+            });
+        }
 
         return res.status(200).json({
             message: "Utilização finalizada com sucesso.",

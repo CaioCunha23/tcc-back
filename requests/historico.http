@@ -41,7 +41,8 @@ Content-Type: application/json
   "modelo": "Modelo Teste",
   "renavam": "123456789",
   "chassi": "1234567890",
-  "status": "disponivel"
+  "status": "disponivel",
+  "colaboradorUid": "JSI123"
 }
 
 ###
@@ -51,5 +52,5 @@ Content-Type: application/json
 
 {
   "placa": "HIJ4567",
-  "colaboradorUid": "LRO234"
+  "colaboradorUid": "JSI123"
 }
