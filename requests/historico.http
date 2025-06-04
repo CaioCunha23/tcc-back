@@ -34,7 +34,6 @@ DELETE http://localhost:3000/historico/1
 ###
 
 POST https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/historico-utilizacao/iniciar
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWRNU0siOiJMUk8yMzQiLCJlbWFpbCI6Imxhcmlzc2Eucm9jaGFAZXhhbXBsZS5jb20iLCJpYXQiOjE3NDg4OTg0Mjl9.K7isdEtKK-e6n2nAGXGCVqEWVjNg435Ed9kbvafwj5g
 Content-Type: application/json
 
 {

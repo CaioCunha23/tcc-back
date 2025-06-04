@@ -134,11 +134,11 @@ async function getWorkerByMskID(req, res) {
     const { uidMSK } = req.params
 
     try {
-        const worker = await Colaborador.findOne({ where: { uidMSK } })
+        const worker = await Colaborador.findByPk(uidMSK)
         if (worker) {
             res.json(worker.toJSON())
         } else {
-            res.status(404).json({ error: 'Colaborador não encontrado pelo UID MSK informado' })
+            res.status(404).json({ error: 'Colaborador não encontrado pelo UID' })
         }
     } catch (error) {
         res.status(500).json({ error: 'Erro ao buscar colaborador: ' + error.message })
