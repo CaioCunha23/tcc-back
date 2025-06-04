@@ -23,7 +23,7 @@ router.post('/colaborador', colaboradoresController.createWorker);
 router.post('/colaboradores/import', upload.single('file'), colaboradoresController.importWorkerCSV);
 router.get('/colaboradores', colaboradoresController.getWorkers);
 router.get('/colaborador/:id', colaboradoresController.getWorkerById);
-router.get('/colaborador/:uidMSK', colaboradoresController.getWorkerByMskID);
+router.get('/colaborador/uid/:uidMSK', colaboradoresController.getWorkerByMskID);
 router.put('/colaborador/:id', colaboradoresController.updateWorker);
 router.delete('/colaborador/:id', colaboradoresController.deleteWorker);
 
