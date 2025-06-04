@@ -134,7 +134,10 @@ async function getWorkerByMskID(req, res) {
     const { uidMSK } = req.params
 
     try {
-        const worker = await Colaborador.findByPk(uidMSK)
+        const worker = await Colaborador.findOne({
+            where: { uidMSK: uidMSK }
+        })
+
         if (worker) {
             res.json(worker.toJSON())
         } else {

@@ -24,7 +24,7 @@ GET https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/colaboradores
 
 ###
 
-GET http://localhost:3000/colaborador/1
+GET https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/colaborador/1
 
 ###
 
