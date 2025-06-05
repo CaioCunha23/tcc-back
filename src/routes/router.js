@@ -52,7 +52,7 @@ router.get('/infracoes/:uidMSK', infracoesController.getInfracaoByUidMSK);
 router.put('/infracao/:id', infracoesController.updateInfracao);
 router.delete('/infracao/:id', infracoesController.deleteInfracao);
 
-router.get('/dashboard-metrics', dashboardMetricsController.getDashboardMetrics);
+router.get('/dashboard-metrics', authService.checaToken, dashboardMetricsController.getDashboardMetrics);
 router.get('/infracoes-chart-data', dashboardMetricsController.getInfracoesChartData);
 router.get('/dashboard-metrics-colaborador-maior-aumento', dashboardMetricsController.getColaboradorMaiorAumento);
 router.get('/top-offenders', dashboardMetricsController.getTopOffenders);
