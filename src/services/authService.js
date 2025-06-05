@@ -30,27 +30,22 @@ async function login(req, res) {
 }
 
 function checaToken(req, res, next) {
-    const headers = req.headers
-    const authHeader = headers.authorization;
-
+    const authHeader = req.headers.authorization
     if (!authHeader) {
-        return next();
+        return res.status(401).json({ error: "Token não enviado" })
     }
 
-    const [, token] = authHeader.split(' ')
-
+    const [, token] = authHeader.split(" ")
     if (!token) {
-        return next();
+        return res.status(401).json({ error: "Token mal formatado" })
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        req.user = decoded;
-        console.log('Token decodificado com sucesso:', decoded);
+        const decoded = jwt.verify(token, process.env.SECRET_KEY)
+        req.user = decoded
         next();
-    } catch (error) {
-        console.log('Erro ao verificar token:', error);
-        next();
+    } catch (err) {
+        return res.status(401).json({ error: "Token inválido ou expirado" })
     }
 }
 
