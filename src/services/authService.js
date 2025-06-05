@@ -25,27 +25,32 @@ async function login(req, res) {
         return res.status(404).json({ error: 'Credenciais inválidas' })
     }
 
-    const token = jwt.sign({ uidMSK: user.uidMSK, email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' })
+    const token = jwt.sign({ uidMSK: user.uidMSK, email: user.email }, process.env.SECRET_KEY)
     return res.status(200).json({ token })
 }
 
 function checaToken(req, res, next) {
-    const authHeader = req.headers.authorization
+    const headers = req.headers
+    const authHeader = headers.authorization;
+
     if (!authHeader) {
-        return res.status(401).json({ error: "Token não enviado" })
+        return next();
     }
 
-    const [, token] = authHeader.split(" ")
+    const [, token] = authHeader.split(' ')
+
     if (!token) {
-        return res.status(401).json({ error: "Token mal formatado" })
+        return next();
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY)
-        req.user = decoded
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+        req.user = decoded;
+        console.log('Token decodificado com sucesso:', decoded);
         next();
-    } catch (err) {
-        return res.status(401).json({ error: "Token inválido ou expirado" })
+    } catch (error) {
+        console.log('Erro ao verificar token:', error);
+        next();
     }
 }
 
