@@ -50,7 +50,7 @@ function checaToken(req, res, next) {
         next();
     } catch (error) {
         console.log('Erro ao verificar token:', error);
-        return res.status(403).json({ message: 'Forbidden' });
+        return res.status(403).json({ message: 'Forbidden' })
     }
 }
 
