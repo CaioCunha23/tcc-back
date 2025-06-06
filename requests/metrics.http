@@ -1,4 +1,4 @@
-GET http://localhost:3000/dashboard-metrics
+GET https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/dashboard-metrics
 
 ###
 
@@ -18,4 +18,4 @@ GET http://localhost:3000/vencimento-multas
 
 ###
 
-GET http://localhost:3000/infracoes-chart-data
+GET https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/infracoes-chart-data

@@ -25,7 +25,7 @@ async function login(req, res) {
         return res.status(404).json({ error: 'Credenciais inválidas' })
     }
 
-    const token = jwt.sign({ uidMSK: user.uidMSK, email: user.email, type: user.type }, process.env.SECRET_KEY, { expiresIn: '3600' })
+    const token = jwt.sign({ uidMSK: user.uidMSK, email: user.email, type: user.type }, process.env.SECRET_KEY, { expiresIn: '4h' })
     return res.status(200).json({ token })
 }
 
