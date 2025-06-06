@@ -21,7 +21,7 @@ router.put('/reset-password/:token', authService.resetPassword);
 
 router.post('/colaborador', colaboradoresController.createWorker);
 router.post('/colaboradores/import', upload.single('file'), colaboradoresController.importWorkerCSV);
-router.get('/colaboradores', colaboradoresController.getWorkers);
+router.get('/colaboradores', authService.checaToken, colaboradoresController.getWorkers);
 router.get('/colaborador/:id', colaboradoresController.getWorkerById);
 router.get('/colaborador/uid/:uidMSK', colaboradoresController.getWorkerByMskID);
 router.put('/colaborador/:id', colaboradoresController.updateWorker);
@@ -53,7 +53,7 @@ router.put('/infracao/:id', infracoesController.updateInfracao);
 router.delete('/infracao/:id', infracoesController.deleteInfracao);
 
 router.get('/dashboard-metrics', authService.checaToken, dashboardMetricsController.getDashboardMetrics);
-router.get('/infracoes-chart-data', dashboardMetricsController.getInfracoesChartData);
+router.get('/infracoes-chart-data', authService.checaToken, dashboardMetricsController.getInfracoesChartData);
 router.get('/dashboard-metrics-colaborador-maior-aumento', authService.checaToken, dashboardMetricsController.getColaboradorMaiorAumento);
 router.get('/top-offenders', dashboardMetricsController.getTopOffenders);
 router.get('/veiculos-devolucao', dashboardMetricsController.getVeiculosContratoProximo);
