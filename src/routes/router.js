@@ -54,7 +54,7 @@ router.delete('/infracao/:id', infracoesController.deleteInfracao);
 
 router.get('/dashboard-metrics', authService.checaToken, dashboardMetricsController.getDashboardMetrics);
 router.get('/infracoes-chart-data', dashboardMetricsController.getInfracoesChartData);
-router.get('/dashboard-metrics-colaborador-maior-aumento', dashboardMetricsController.getColaboradorMaiorAumento);
+router.get('/dashboard-metrics-colaborador-maior-aumento', authService.checaToken, dashboardMetricsController.getColaboradorMaiorAumento);
 router.get('/top-offenders', dashboardMetricsController.getTopOffenders);
 router.get('/veiculos-devolucao', dashboardMetricsController.getVeiculosContratoProximo);
 router.get('/vencimento-multas', dashboardMetricsController.getMultasProximasVencer);
