@@ -141,19 +141,33 @@ async function createInfractionFromCSV(infractionData) {
         enviadoParaRH
     } = infractionData;
 
-    if (
-        !tipo ||
-        !colaboradorUid ||
-        !placaVeiculo ||
-        !costCenter ||
-        !dataInfracao ||
-        !valor ||
-        !marca ||
-        !dataEnvio ||
-        !indicacaoLimite ||
-        !statusResposta
-    ) {
-        console.log("Campos obrigatórios faltando.");
+    const camposObrigatorios = {
+        tipo,
+        colaboradorUid,
+        placaVeiculo,
+        costCenter,
+        dataInfracao,
+        valor,
+        marca,
+        dataEnvio,
+        indicacaoLimite,
+        statusResposta
+    };
+
+    const camposFaltando = [];
+    if (!tipo) camposFaltando.push('tipo');
+    if (!colaboradorUid) camposFaltando.push('colaboradorUid');
+    if (!placaVeiculo) camposFaltando.push('placaVeiculo');
+    if (!costCenter) camposFaltando.push('costCenter');
+    if (!dataInfracao) camposFaltando.push('dataInfracao');
+    if (!valor) camposFaltando.push('valor');
+    if (!marca) camposFaltando.push('marca');
+    if (!dataEnvio) camposFaltando.push('dataEnvio');
+    if (!indicacaoLimite) camposFaltando.push('indicacaoLimite');
+    if (!statusResposta) camposFaltando.push('statusResposta');
+
+    if (camposFaltando.length > 0) {
+        throw new Error(`Campos obrigatórios faltando: ${camposFaltando.join(', ')}`);
     }
 
     try {
@@ -179,61 +193,140 @@ async function createInfractionFromCSV(infractionData) {
             reconhecimento,
             enviadoParaRH
         });
+
+        try {
+            const colaborador = await Colaborador.findOne({
+                where: { uidMSK: colaboradorUid }
+            });
+
+            if (colaborador?.email) {
+                await sendEmail({
+                    to: colaborador.email,
+                    subject: `Notificação de Infração – ${codigoMulta || placaVeiculo}`,
+                    text: `Olá ${colaborador.nome},
+
+Foi registrada uma infração do tipo "${tipo}" em ${dataInfracao}.
+
+- Placa: ${placaVeiculo}
+- Valor: R$ ${valor}
+- Rodovia: ${rodovia || 'N/A'}
+
+Acesse o sistema para mais detalhes.
+
+Atenciosamente,
+Equipe de Infrações`,
+                    html: `<p>Olá <strong>${colaborador.nome}</strong>,</p>
+                   <p>Foi registrada uma infração do tipo "<em>${tipo}</em>" em ${dataInfracao}.</p>
+                   <ul>
+                     <li>Placa: ${placaVeiculo}</li>
+                     <li>Valor: R$ ${valor}</li>
+                     <li>Rodovia: ${rodovia || 'N/A'}</li>
+                   </ul>
+                   <p>Acesse o sistema para mais detalhes.</p>
+                   <p>Atenciosamente,<br/>Equipe de Infrações</p>`
+                });
+            } else {
+                console.warn(`Colaborador ${colaboradorUid} não encontrado ou sem e-mail durante importação CSV.`);
+            }
+        } catch (emailError) {
+            console.error(`Erro ao enviar email para colaborador ${colaboradorUid}:`, emailError);
+        }
+
+        return infraction;
     } catch (error) {
-        console.error("Erro ao salvar no banco:", error);
+        throw error;
     }
 }
 
 async function importInfractionCSV(req, res) {
-    console.log("Arquivo recebido pelo Multer:", req.file);
-
     if (!req.file) {
         return res.status(400).json({ error: "Arquivo CSV não enviado." });
     }
 
     const filePath = path.resolve(req.file.path);
+
+    if (!fs.existsSync(filePath)) {
+        return res.status(400).json({ error: "Arquivo não encontrado no servidor." });
+    }
+
     const infractions = [];
+    let linhasProcessadas = 0;
+    let linhasComErro = 0;
+    let emailsEnviados = 0;
 
     try {
         await new Promise((resolve, reject) => {
-            fs.createReadStream(filePath)
-                .pipe(csv.parse({ columns: true, trim: true, delimiter: ';' }))
+            const parser = csv.parse({
+                columns: true,
+                trim: true,
+                delimiter: ';',
+                skip_empty_lines: true
+            });
+
+            fs.createReadStream(filePath, { encoding: 'utf8' })
+                .pipe(parser)
                 .on('data', (row) => {
-                    console.log("Linha lida:", row);
+                    linhasProcessadas++;
                     infractions.push(row);
                 })
                 .on('end', () => {
-                    console.log("Final do processamento do CSV. Total de linhas:", infractions.length);
                     resolve();
                 })
                 .on('error', (error) => {
-                    console.error("Erro ao ler o CSV:", error);
                     reject(error);
                 });
         });
 
-        for (const infractionData of infractions) {
+        const resultados = [];
+
+        for (let i = 0; i < infractions.length; i++) {
+            const infractionData = infractions[i];
+
             try {
-                await createWorkerFromCSV(infractionData);
-                console.log("Infração criada:", infractionData);
+                const infraction = await createInfractionFromCSV(infractionData);
+                const colaborador = await Colaborador.findOne({
+                    where: { uidMSK: infractionData.colaboradorUid }
+                });
+
+                if (colaborador?.email) {
+                    emailsEnviados++;
+                }
+
+                resultados.push({
+                    sucesso: true,
+                    tipo: infraction.tipo,
+                    id: infraction.id,
+                    colaboradorUid: infraction.colaboradorUid,
+                    emailEnviado: !!colaborador?.email
+                });
             } catch (e) {
-                console.error("Erro ao criar infração:", infractionData, e);
+                linhasComErro++;
+                resultados.push({
+                    sucesso: false,
+                    erro: e.message,
+                    dados: infractionData,
+                    linha: i + 1,
+                    emailEnviado: false
+                });
             }
         }
-        fs.unlink(filePath, (err) => {
-            if (err) {
-                console.error("Erro ao remover o arquivo CSV:", err);
-            }
-        });
-        return res.status(201).json({ message: "Infrações importadas com sucesso!", total: infractions.length });
+
+        const response = {
+            message: "Processamento do CSV de infrações concluído!",
+            total: infractions.length,
+            sucessos: infractions.length - linhasComErro,
+            erros: linhasComErro,
+            emailsEnviados: emailsEnviados,
+            detalhes: resultados
+        };
+
+        return res.status(201).json(response);
+
     } catch (error) {
-        console.error("Erro ao processar o CSV:", error);
-        fs.unlink(filePath, (err) => {
-            if (err) {
-                console.error("Erro ao remover o arquivo CSV após erro:", err);
-            }
+        return res.status(500).json({
+            error: "Erro ao importar infrações: " + error.message,
+            stack: error.stack
         });
-        return res.status(500).json({ error: "Erro ao importar infrações: " + error.message });
     }
 }
 

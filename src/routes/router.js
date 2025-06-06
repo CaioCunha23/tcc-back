@@ -20,7 +20,7 @@ router.put('/reset-password/:token', authService.resetPassword);
 
 
 router.post('/colaborador', colaboradoresController.createWorker);
-router.post('/colaboradores/import', upload.single('file'), colaboradoresController.importWorkerCSV);
+router.post('/colaboradores/import', upload.single('workerUpload'), colaboradoresController.importWorkerCSV);
 router.get('/colaboradores', authService.checaToken, colaboradoresController.getWorkers);
 router.get('/colaborador/:id', colaboradoresController.getWorkerById);
 router.get('/colaborador/uid/:uidMSK', colaboradoresController.getWorkerByMskID);
@@ -45,7 +45,7 @@ router.post("/historico-utilizacao/iniciar", authService.checaToken, historicoUt
 router.post("/historico-utilizacao/finalizar", authService.checaToken, historicoUtilizacaoVeiculosController.finishUse);
 
 router.post('/infracao', infracoesController.createInfracao);
-router.post('/infracoes/import', upload.single('file'), infracoesController.importInfractionCSV);
+router.post('/infracoes/import', upload.single('infractionsUpload'), infracoesController.importInfractionCSV);
 router.get('/infracoes', authService.checaToken, infracoesController.getInfracoes);
 router.get('/infracao/:id', infracoesController.getInfracaoById);
 router.get('/infracoes/:uidMSK', infracoesController.getInfracaoByUidMSK);
