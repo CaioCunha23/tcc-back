@@ -9,25 +9,22 @@ async function getDashboardMetrics(req, res) {
         const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
-        // total gasto com infrações
-        const totalInfractionsValue = (await Infracao.sum('valor')) || 0;
+        const totalInfractionsValue = (await Infracao.sum("valor")) || 0;
 
-        // som do mes atual com o anterior de multas
-        const currentMultas = (await Infracao.sum('valor', {
+        const currentMultas = (await Infracao.sum("valor", {
             where: {
-                tipo: 'multa',
-                dataInfracao: { [Op.between]: [currentMonthStart, now] }
-            }
+                tipo: "multa",
+                dataInfracao: { [Op.between]: [currentMonthStart, now] },
+            },
         })) || 0;
 
-        const previousMultas = (await Infracao.sum('valor', {
+        const previousMultas = (await Infracao.sum("valor", {
             where: {
-                tipo: 'multa',
-                dataInfracao: { [Op.between]: [previousMonthStart, previousMonthEnd] }
-            }
+                tipo: "multa",
+                dataInfracao: { [Op.between]: [previousMonthStart, previousMonthEnd] },
+            },
         })) || 0;
 
-        // variação percentual se o período anterior tiver valor > 0
         let growthMultas = 0;
         let growthMultasPercent = 0;
         if (previousMultas > 0) {
@@ -35,22 +32,20 @@ async function getDashboardMetrics(req, res) {
             growthMultasPercent = ((currentMultas - previousMultas) / previousMultas) * 100;
         }
 
-        // soma do mês atual e do mês anterior sem parar
-        const currentSemParar = (await Infracao.sum('valor', {
+        const currentSemParar = (await Infracao.sum("valor", {
             where: {
-                tipo: 'sem parar',
-                dataInfracao: { [Op.between]: [currentMonthStart, now] }
-            }
+                tipo: "sem parar",
+                dataInfracao: { [Op.between]: [currentMonthStart, now] },
+            },
         })) || 0;
 
-        const previousSemParar = (await Infracao.sum('valor', {
+        const previousSemParar = (await Infracao.sum("valor", {
             where: {
-                tipo: 'sem parar',
-                dataInfracao: { [Op.between]: [previousMonthStart, previousMonthEnd] }
-            }
+                tipo: "sem parar",
+                dataInfracao: { [Op.between]: [previousMonthStart, previousMonthEnd] },
+            },
         })) || 0;
 
-        // variação percentual se o período anterior tiver valor > 0
         let growthSemParar = 0;
         let growthSemPararPercent = 0;
         if (previousSemParar > 0) {
@@ -58,15 +53,35 @@ async function getDashboardMetrics(req, res) {
             growthSemPararPercent = ((currentSemParar - previousSemParar) / previousSemParar) * 100;
         }
 
-        const vehiclesInUse = await Veiculo.count({
-            where: { status: 'em uso' }
-        });
-        const vehiclesInMaintenance = await Veiculo.count({
-            where: { status: 'em manutenção' }
-        });
-        const vehiclesAvailable = await Veiculo.count({
-            where: { status: 'Disponível' }
-        });
+        const vehiclesInUse = await Veiculo.count({ where: { status: "em uso" } });
+        const vehiclesInMaintenance = await Veiculo.count({ where: { status: "em manutenção" } });
+        const vehiclesAvailable = await Veiculo.count({ where: { status: "Disponível" } });
+
+        let userTotalInfractionsValue = 0;
+        let userTotalMultasValue = 0;
+        let userTotalSemPararValue = 0;
+
+        if (req.user && req.user.id) {
+            userTotalInfractionsValue = (await Infracao.sum("valor", {
+                where: {
+                    userId: req.user.id,
+                },
+            })) || 0;
+
+            userTotalMultasValue = (await Infracao.sum("valor", {
+                where: {
+                    userId: req.user.id,
+                    tipo: "multa",
+                },
+            })) || 0;
+
+            userTotalSemPararValue = (await Infracao.sum("valor", {
+                where: {
+                    userId: req.user.id,
+                    tipo: "sem parar",
+                },
+            })) || 0;
+        }
 
         return res.json({
             totalInfractionsValue: parseFloat(totalInfractionsValue),
@@ -76,7 +91,10 @@ async function getDashboardMetrics(req, res) {
             growthSemPararPercent,
             vehiclesInUse,
             vehiclesInMaintenance,
-            vehiclesAvailable
+            vehiclesAvailable,
+            userTotalInfractionsValue: parseFloat(userTotalInfractionsValue),
+            userTotalMultasValue: parseFloat(userTotalMultasValue),
+            userTotalSemPararValue: parseFloat(userTotalSemPararValue),
         });
     } catch (error) {
         console.error("Erro ao buscar métricas:", error);
@@ -86,35 +104,76 @@ async function getDashboardMetrics(req, res) {
 
 async function getInfracoesChartData(req, res) {
     try {
-        const results = await Infracao.findAll({
+        const globalResults = await Infracao.findAll({
             attributes: [
                 [Infracao.sequelize.fn("DATE_FORMAT", Infracao.sequelize.col("dataInfracao"), "%Y-%m"), "month"],
                 "tipo",
-                [Infracao.sequelize.fn("SUM", Infracao.sequelize.col("valor")), "totalValor"]
+                [Infracao.sequelize.fn("SUM", Infracao.sequelize.col("valor")), "totalValor"],
             ],
             group: ["month", "tipo"],
-            order: [[Infracao.sequelize.literal("month"), "ASC"]]
+            order: [[Infracao.sequelize.literal("month"), "ASC"]],
         });
 
-        const chartDataMap = {};
+        let userResults = [];
+        if (req.user && req.user.id) {
+            userResults = await Infracao.findAll({
+                attributes: [
+                    [Infracao.sequelize.fn("DATE_FORMAT", Infracao.sequelize.col("dataInfracao"), "%Y-%m"), "month"],
+                    "tipo",
+                    [Infracao.sequelize.fn("SUM", Infracao.sequelize.col("valor")), "totalValor"],
+                ],
+                where: { userId: req.user.id },
+                group: ["month", "tipo"],
+                order: [[Infracao.sequelize.literal("month"), "ASC"]],
+            });
+        }
 
-        results.forEach(item => {
+        const mapGlobal = {};
+        globalResults.forEach(item => {
             const month = item.get("month");
             const tipo = item.get("tipo");
             const totalValor = parseFloat(item.get("totalValor"));
 
-            if (!chartDataMap[month]) {
-                chartDataMap[month] = { date: month, multa: 0, semParar: 0 };
+            if (!mapGlobal[month]) {
+                mapGlobal[month] = { multa: 0, semParar: 0 };
             }
-
             if (tipo === "multa") {
-                chartDataMap[month].multa = totalValor;
+                mapGlobal[month].multa = totalValor;
             } else if (tipo === "sem parar") {
-                chartDataMap[month].semParar = totalValor;
+                mapGlobal[month].semParar = totalValor;
             }
         });
 
-        const chartData = Object.values(chartDataMap).sort((a, b) => a.date.localeCompare(b.date));
+        const mapUser = {};
+        userResults.forEach(item => {
+            const month = item.get("month");
+            const tipo = item.get("tipo");
+            const totalValor = parseFloat(item.get("totalValor"));
+
+            if (!mapUser[month]) {
+                mapUser[month] = { multa: 0, semParar: 0 };
+            }
+            if (tipo === "multa") {
+                mapUser[month].multa = totalValor;
+            } else if (tipo === "sem parar") {
+                mapUser[month].semParar = totalValor;
+            }
+        });
+
+        const allMonths = new Set([
+            ...Object.keys(mapGlobal),
+            ...Object.keys(mapUser),
+        ]);
+
+        const chartData = Array.from(allMonths).map(month => ({
+            date: month,
+            globalMulta: mapGlobal[month]?.multa || 0,
+            globalSemParar: mapGlobal[month]?.semParar || 0,
+            userMulta: mapUser[month]?.multa || 0,
+            userSemParar: mapUser[month]?.semParar || 0,
+        }));
+
+        chartData.sort((a, b) => a.date.localeCompare(b.date));
 
         return res.json(chartData);
     } catch (error) {
@@ -236,26 +295,26 @@ export async function getTopOffenders(req, res) {
 }
 
 export async function getVeiculosContratoProximo(req, res) {
-  try {
-    const hoje = new Date()
-    const tresMeses = new Date()
-    tresMeses.setMonth(hoje.getMonth() + 3)
+    try {
+        const hoje = new Date()
+        const tresMeses = new Date()
+        tresMeses.setMonth(hoje.getMonth() + 3)
 
-    const veiculos = await Veiculo.findAll({
-      where: {
-        previsaoDevolucao: {
-          [Op.between]: [hoje, tresMeses],
-        },
-      },
-      attributes: ['placa', 'previsaoDevolucao'],
-      order: [['previsaoDevolucao', 'ASC']],
-    })
+        const veiculos = await Veiculo.findAll({
+            where: {
+                previsaoDevolucao: {
+                    [Op.between]: [hoje, tresMeses],
+                },
+            },
+            attributes: ['placa', 'previsaoDevolucao'],
+            order: [['previsaoDevolucao', 'ASC']],
+        })
 
-    return res.json(veiculos)
-  } catch (err) {
-    console.error('Erro ao buscar veículos com contrato próximo:', err)
-    return res.status(500).json({ error: 'Erro interno' })
-  }
+        return res.json(veiculos)
+    } catch (err) {
+        console.error('Erro ao buscar veículos com contrato próximo:', err)
+        return res.status(500).json({ error: 'Erro interno' })
+    }
 }
 
 export async function getMultasProximasVencer(req, res) {
