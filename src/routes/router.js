@@ -29,7 +29,7 @@ router.delete('/colaborador/:id', colaboradoresController.deleteWorker);
 
 router.post('/veiculo', veiculosController.createVehicle);
 router.post('/veiculos/import', upload.single('file'), veiculosController.importVehicleCSV);
-router.get('/veiculos', veiculosController.getVehicles);
+router.get('/veiculos', authService.checaToken, veiculosController.getVehicles);
 router.get('/veiculo/:id', veiculosController.getVehicleByID);
 router.get('/veiculo/:uidMSK', veiculosController.getVehicleByMskID);
 router.get('/veiculo/:placa', veiculosController.getVehicleByPlate);
@@ -37,7 +37,7 @@ router.put('/veiculo/:id', veiculosController.updateVehicle);
 router.delete('/veiculo/:id', veiculosController.deleteVehicle);
 
 router.post('/historico', historicoUtilizacaoVeiculosController.createHistorico);
-router.get('/historicos', historicoUtilizacaoVeiculosController.getHistoricos);
+router.get('/historicos', authService.checaToken, historicoUtilizacaoVeiculosController.getHistoricos);
 router.get('/historico/:id', historicoUtilizacaoVeiculosController.getHistoricoById);
 router.put('/historico/:id', historicoUtilizacaoVeiculosController.updateHistorico);
 router.delete('/historico/:id', historicoUtilizacaoVeiculosController.deleteHistorico);
@@ -46,7 +46,7 @@ router.post("/historico-utilizacao/finalizar", authService.checaToken, historico
 
 router.post('/infracao', infracoesController.createInfracao);
 router.post('/infracoes/import', upload.single('file'), infracoesController.importInfractionCSV);
-router.get('/infracoes', infracoesController.getInfracoes);
+router.get('/infracoes', authService.checaToken, infracoesController.getInfracoes);
 router.get('/infracao/:id', infracoesController.getInfracaoById);
 router.get('/infracoes/:uidMSK', infracoesController.getInfracaoByUidMSK);
 router.put('/infracao/:id', infracoesController.updateInfracao);

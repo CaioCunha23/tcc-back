@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ###
 
-GET https://bck8ksw0kkw0csckkoo8gcgk.212.85.1.115.sslip.io/historicos
+GET http://localhost:3000/historicos
 
 ###
 
