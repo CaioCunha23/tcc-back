@@ -60,30 +60,83 @@ async function getDashboardMetrics(req, res) {
         let userTotalInfractionsValue = 0;
         let userTotalMultasValue = 0;
         let userTotalSemPararValue = 0;
+        let userCurrentMultasValue = 0;
+        let userPreviousMultasValue = 0;
+        let userCurrentSemPararValue = 0;
+        let userPreviousSemPararValue = 0;
+        let userGrowthMultas = 0;
+        let userGrowthMultasPercent = 0;
+        let userGrowthSemParar = 0;
+        let userGrowthSemPararPercent = 0;
 
-        if (req.user && req.user.id) {
+        if (req.user && req.user.uidMSK) {
             userTotalInfractionsValue = (await Infracao.sum("valor", {
                 where: {
-                    userId: req.user.id,
+                    colaboradorUid: req.user.uidMSK,
                 },
             })) || 0;
 
             userTotalMultasValue = (await Infracao.sum("valor", {
                 where: {
-                    userId: req.user.id,
+                    colaboradorUid: req.user.uidMSK,
                     tipo: "multa",
                 },
             })) || 0;
 
             userTotalSemPararValue = (await Infracao.sum("valor", {
                 where: {
-                    userId: req.user.id,
+                    colaboradorUid: req.user.uidMSK,
                     tipo: "sem parar",
                 },
             })) || 0;
+
+            userCurrentMultasValue = (await Infracao.sum("valor", {
+                where: {
+                    colaboradorUid: req.user.uidMSK,
+                    tipo: "multa",
+                    dataInfracao: { [Op.between]: [currentMonthStart, now] },
+                },
+            })) || 0;
+
+            userPreviousMultasValue = (await Infracao.sum("valor", {
+                where: {
+                    colaboradorUid: req.user.uidMSK,
+                    tipo: "multa",
+                    dataInfracao: { [Op.between]: [previousMonthStart, previousMonthEnd] },
+                },
+            })) || 0;
+
+            userCurrentSemPararValue = (await Infracao.sum("valor", {
+                where: {
+                    colaboradorUid: req.user.uidMSK,
+                    tipo: "sem parar",
+                    dataInfracao: { [Op.between]: [currentMonthStart, now] },
+                },
+            })) || 0;
+
+            userPreviousSemPararValue = (await Infracao.sum("valor", {
+                where: {
+                    colaboradorUid: req.user.uidMSK,
+                    tipo: "sem parar",
+                    dataInfracao: { [Op.between]: [previousMonthStart, previousMonthEnd] },
+                },
+            })) || 0;
+
+            if (userPreviousMultasValue > 0) {
+                userGrowthMultas = userCurrentMultasValue - userPreviousMultasValue;
+                userGrowthMultasPercent = ((userCurrentMultasValue - userPreviousMultasValue) / userPreviousMultasValue) * 100;
+            }
+
+            if (userPreviousSemPararValue > 0) {
+                userGrowthSemParar = userCurrentSemPararValue - userPreviousSemPararValue;
+                userGrowthSemPararPercent = ((userCurrentSemPararValue - userPreviousSemPararValue) / userPreviousSemPararValue) * 100;
+            }
+
+        } else {
+            console.log('- req.user ou req.user.uidMSK não encontrado');
         }
 
-        return res.json({
+        const response = {
             totalInfractionsValue: parseFloat(totalInfractionsValue),
             growthMultas,
             growthMultasPercent,
@@ -95,7 +148,13 @@ async function getDashboardMetrics(req, res) {
             userTotalInfractionsValue: parseFloat(userTotalInfractionsValue),
             userTotalMultasValue: parseFloat(userTotalMultasValue),
             userTotalSemPararValue: parseFloat(userTotalSemPararValue),
-        });
+            userGrowthMultas,
+            userGrowthMultasPercent,
+            userGrowthSemParar,
+            userGrowthSemPararPercent,
+        };
+
+        return res.json(response);
     } catch (error) {
         console.error("Erro ao buscar métricas:", error);
         return res.status(500).json({ error: "Erro interno do servidor" });
@@ -115,14 +174,14 @@ async function getInfracoesChartData(req, res) {
         });
 
         let userResults = [];
-        if (req.user && req.user.id) {
+        if (req.user && req.user.uidMSK) {
             userResults = await Infracao.findAll({
                 attributes: [
                     [Infracao.sequelize.fn("DATE_FORMAT", Infracao.sequelize.col("dataInfracao"), "%Y-%m"), "month"],
                     "tipo",
                     [Infracao.sequelize.fn("SUM", Infracao.sequelize.col("valor")), "totalValor"],
                 ],
-                where: { userId: req.user.id },
+                where: { colaboradorUid: req.user.uidMSK },
                 group: ["month", "tipo"],
                 order: [[Infracao.sequelize.literal("month"), "ASC"]],
             });
@@ -160,18 +219,35 @@ async function getInfracoesChartData(req, res) {
             }
         });
 
-        const allMonths = new Set([
-            ...Object.keys(mapGlobal),
-            ...Object.keys(mapUser),
-        ]);
+        const isAdmin = req.user?.role === 'admin' ||
+            req.user?.isAdmin === true ||
+            req.user?.type === 'admin' ||
+            req.user?.nivel === 'admin' ||
+            req.user?.perfil === 'admin';
 
-        const chartData = Array.from(allMonths).map(month => ({
-            date: month,
-            globalMulta: mapGlobal[month]?.multa || 0,
-            globalSemParar: mapGlobal[month]?.semParar || 0,
-            userMulta: mapUser[month]?.multa || 0,
-            userSemParar: mapUser[month]?.semParar || 0,
-        }));
+
+        let chartData;
+        if (isAdmin) {
+            chartData = Object.keys(mapGlobal).map(month => ({
+                date: month,
+                multa: mapGlobal[month].multa,
+                semParar: mapGlobal[month].semParar,
+            }));
+        } else {
+            chartData = Object.keys(mapUser).map(month => ({
+                date: month,
+                multa: mapUser[month].multa,
+                semParar: mapUser[month].semParar,
+            }));
+        }
+
+        if (!isAdmin && Object.keys(mapUser).length === 0) {
+            chartData = [];
+        }
+
+        if (isAdmin && Object.keys(mapGlobal).length === 0) {
+            chartData = [];
+        }
 
         chartData.sort((a, b) => a.date.localeCompare(b.date));
 
@@ -189,7 +265,6 @@ export async function getColaboradorMaiorAumento(req, res) {
         const previousPeriodStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const previousPeriodEnd = new Date(now.getFullYear(), now.getMonth(), 0);
 
-        // infrações por colaborador para o início do mês atual até o dia
         const currentCounts = await Infracao.findAll({
             attributes: [
                 'colaboradorUid',
@@ -203,7 +278,6 @@ export async function getColaboradorMaiorAumento(req, res) {
             group: ['colaboradorUid']
         });
 
-        // infrações por colaborador para o mês anterior
         const previousCounts = await Infracao.findAll({
             attributes: [
                 'colaboradorUid',
@@ -217,7 +291,6 @@ export async function getColaboradorMaiorAumento(req, res) {
             group: ['colaboradorUid']
         });
 
-        // acesso rápido aos dados do período anterior
         const previousMap = {};
         previousCounts.forEach(record => {
             previousMap[record.colaboradorUid] = parseInt(record.get('previousCount'));
@@ -273,7 +346,6 @@ export async function getTopOffenders(req, res) {
             group: ['colaboradorUid']
         });
 
-        // porcentagem de infrações de cada colaborador em relação ao total do mês anterior
         const results = offenders.map(record => {
             const infractionCount = parseInt(record.get('infractionCount'));
             const percentage = totalInfractions > 0 ? (infractionCount / totalInfractions) * 100 : 0;
